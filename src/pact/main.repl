@@ -1,0 +1,31 @@
+;; Prepare
+
+(begin-tx "Defining Keyset")
+(env-data {
+    "admin-keyset": ["admin-key"],
+    "user-keyset": ["user-key"],
+    "bob-keyset": ["bob-key"]
+})
+
+(begin-tx "Defining Keys and Capability")
+(env-keys ["admin-key", "user-key"])
+
+(load "./namespace.pact")
+(load "./main.pact")
+
+(create-table tbl_user)
+(create-table tbl_docs)
+(create-table tbl_activities)
+
+;(welcome-message)
+;(create-user "user123" "Bob" "Smith" "Joe" 23 true (read-keyset "admin-keyset"))
+
+;(user-details "user123")
+
+(create-document "docs123" "Role and Regulation" "https://file.com" true (read-keyset "user-keyset"))
+(document-details "docs123")
+
+(test-capability (ACTIVITY))
+(transfer-document 'docs123 'act123 (read-keyset 'bob-keyset))
+(document-details "docs123")
+(activity-details 'act123)
