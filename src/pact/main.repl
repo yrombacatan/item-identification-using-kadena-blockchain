@@ -13,19 +13,18 @@
 (load "./namespace.pact")
 (load "./main.pact")
 
-(create-table tbl_user)
-(create-table tbl_docs)
+(create-table tbl_items)
 (create-table tbl_activities)
 
-;(welcome-message)
-;(create-user "user123" "Bob" "Smith" "Joe" 23 true (read-keyset "admin-keyset"))
+(welcome-message)
 
-;(user-details "user123")
-
-(create-document "docs123" "Role and Regulation" "https://file.com" true (read-keyset "user-keyset"))
-(document-details "docs123")
+(create-item "item123" "Kitties" "https://file.com" true (read-keyset "user-keyset") 'act1)
+(create-item "item124" "Doggies" "https://file.com" true (read-keyset "user-keyset") 'act2)
+(item-all)
 
 (test-capability (ACTIVITY))
-(transfer-document 'docs123 'act123 (read-keyset 'bob-keyset))
-(document-details "docs123")
-(activity-details 'act123)
+(transfer-item 'item123 'act3 (read-keyset 'bob-keyset))
+(item-details "item123")
+(activity-details 'act1)
+(activity-details 'act2)
+(activity-details 'act3)

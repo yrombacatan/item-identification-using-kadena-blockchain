@@ -9,30 +9,22 @@
         true)
     
     ; define table schema
-    (defschema users
-        fname: string
-        lname: string
-        mname: string
-        age: integer
-        status: bool
-        guard: guard
-    )
-    (defschema documents
+    (defschema items
         name: string
         url: string
         status: bool
         guard: guard
     )
     (defschema activities
-        doc_id: string
+        item_id: string
         from: guard
         to: guard
         date: string
+        event: string
     )
 
     ; define table
-    (deftable tbl_user: {users})
-    (deftable tbl_docs: {documents})
+    (deftable tbl_items: {items})
     (deftable tbl_activities: {activities})
 
     ; main logic
@@ -40,86 +32,57 @@
     (defun welcome-message()
         (format "Welcome to JSBI Product Indentification Smart Contract!" [])
     )
-    
-    (defun create-user:object(
-        user_id:string
-        fname:string
-        lname:string
-        mname:string
-        age:integer
-        status:bool
-        guard:guard
-        )
-        
-        ; only admin is allowed to create user
-        (enforce-guard (read-keyset 'admin-keyset))
 
-        ; validate input
-        (enforce (!= user_id "") "User id is required")
-        (enforce (!= fname "") "First Name id is required")
-        (enforce (!= lname "") "Last Name is required")
-        (enforce (!= mname "") "Middle Name id is required")
-
-        (insert tbl_user user_id {
-            'fname: fname,
-            'lname: lname,
-            'mname: mname,
-            'age: age,
-            'status: status,
-            'guard: guard
-        })
-        
-        (format "User {} created, Guard: {}" [user_id, guard])
-    )
-
-    (defun user-details:object(user_id)
-        (read tbl_user user_id)
-    )
-
-    (defun create-document:object(
-        document_id:string
+    (defun create-item:object(
+        item_id:string
         name:string
         url:string
         status:bool
         guard:guard
+        act_id:string
         )
 
-        ; only admin is allowed to create user
-        (enforce-guard (read-keyset 'admin-keyset))
-
         ; validate input
-        (enforce (!= document_id "") "Document id is required")
-        (enforce (!= name "") "Document name id is required")
+        (enforce (!= item_id "") "Item id is required")
+        (enforce (!= name "") "Item name id is required")
         (enforce (!= url "") "Url is required")
         (enforce (!= status "") "Status is required")
 
-        (insert tbl_docs document_id {
+        (insert tbl_items item_id {
             'name: name,
             'url: url,
             'status: status,
             'guard: guard
         })
         
-        (format "Documents {} created, Guard: {}" [document_id, guard])
+        (with-capability (ACTIVITY)
+                (create-activity 
+                    act_id 
+                    item_id 
+                    guard 
+                    guard
+                    (format-time "%F" (time "2022-03-29T08:30:00Z")) 
+                    'creation)
+            )
+
+        (format "Item {} created, Guard: {}" [item_id, guard])
     )
 
-    (defun document-details:object(documents_id)
-        ; admin or owner only
-        (enforce-one "Authorization failed"
-            [
-                (enforce-guard (read-keyset 'admin-keyset))
-                (enforce-guard (at 'guard (read tbl_docs documents_id)))
-            ]
-        )
-        (read tbl_docs documents_id)
+    (defun item-details:object(item_id)
+        (read tbl_items item_id)
+    )
+
+    (defun item-all:list()
+        (map (item-details) (keys tbl_items))
     )
 
     (defun create-activity:object(
         act_id:string
-        doc_id:string
+        item_id:string
         sender:guard
         receiver:guard
         date:string
+        event:string
         )
 
         (require-capability (ACTIVITY))
@@ -127,15 +90,16 @@
         (enforce-one "Authorization failed"
             [
                 (enforce-guard (read-keyset 'admin-keyset))
-                (enforce-guard (at 'guard (read tbl_docs doc_id)))
+                (enforce-guard (at 'guard (read tbl_items item_id)))
             ]
         )
 
         (insert tbl_activities act_id {
-            'doc_id: doc_id,
+            'item_id: item_id,
             'from: sender,
             'to: receiver,
-            'date: date
+            'date: date,
+            'event: event
             })
 
     )
@@ -144,28 +108,34 @@
         (read tbl_activities act_id)
     )
 
-    (defun transfer-document:object(
-            doc_id:string
+    (defun transfer-item:object(
+            item_id:string
             act_id:string
             receiver:guard
         )
 
-        (enforce (!= doc_id "") "Document id is required")
+        (enforce (!= item_id "") "Item id is required")
         (enforce (!= act_id "") "Activity id is required")
         ; owner only
-        (with-read tbl_docs doc_id {
+        (with-read tbl_items item_id {
             "name":= name,
             "guard":= sender
             }
 
             (enforce-guard sender)
-            (update tbl_docs doc_id {"guard": receiver })
+            (update tbl_items item_id {"guard": receiver })
 
             (with-capability (ACTIVITY)
-                (create-activity act_id doc_id sender receiver (format-time "%F" (time "2022-03-29T08:30:00Z")))
+                (create-activity 
+                    act_id 
+                    item_id 
+                    sender 
+                    receiver 
+                    (format-time "%F" (time "2022-03-29T08:30:00Z")) 
+                    'transfer)
             )
 
-            (format "Document {} was successfully transferred from {} to {}" [doc_id, sender, receiver])
+            (format "Item {} was successfully transferred from {} to {}" [item_id, sender, receiver])
         )
     )
     
