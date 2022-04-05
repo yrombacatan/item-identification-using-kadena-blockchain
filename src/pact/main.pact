@@ -1,17 +1,26 @@
+(define-keyset 'admin-keyset)
+(define-keyset 'user-keyset)
+
+(define-namespace 'jbsi
+    (keyset-ref-guard 'admin-keyset)
+    (keyset-ref-guard 'user-keyset))
+
 (namespace 'jbsi)
 
-(module product_identication GOVERNANCE
+(module product_identification GOVERNANCE
     ; capability
     (defcap GOVERNANCE()
         (enforce-guard (read-keyset 'admin-keyset))
     )
-    (defcap ACTIVITY()
-        true)
+    (defcap ALLOW_ENTRY(item_id)
+       (enforce-guard (at 'guard (read tbl_items item_id))))
     
     ; define table schema
     (defschema items
         name: string
         url: string
+        description: string
+        date: string
         status: bool
         guard: guard
     )
@@ -37,6 +46,8 @@
         item_id:string
         name:string
         url:string
+        description:string
+        date:string
         status:bool
         guard:guard
         act_id:string
@@ -51,11 +62,13 @@
         (insert tbl_items item_id {
             'name: name,
             'url: url,
+            'description: description,
+            'date: date,
             'status: status,
             'guard: guard
         })
         
-        (with-capability (ACTIVITY)
+        (with-capability (ALLOW_ENTRY item_id)
                 (create-activity 
                     act_id 
                     item_id 
@@ -85,14 +98,7 @@
         event:string
         )
 
-        (require-capability (ACTIVITY))
-             ; admin or owner only
-        (enforce-one "Authorization failed"
-            [
-                (enforce-guard (read-keyset 'admin-keyset))
-                (enforce-guard (at 'guard (read tbl_items item_id)))
-            ]
-        )
+        (require-capability (ALLOW_ENTRY item_id))
 
         (insert tbl_activities act_id {
             'item_id: item_id,
@@ -123,9 +129,7 @@
             }
 
             (enforce-guard sender)
-            (update tbl_items item_id {"guard": receiver })
-
-            (with-capability (ACTIVITY)
+            (with-capability (ALLOW_ENTRY item_id)
                 (create-activity 
                     act_id 
                     item_id 
@@ -135,8 +139,13 @@
                     'transfer)
             )
 
+            (update tbl_items item_id {"guard": receiver })
+
             (format "Item {} was successfully transferred from {} to {}" [item_id, sender, receiver])
         )
     )
     
 )
+
+(create-table tbl_items)
+(create-table tbl_activities)

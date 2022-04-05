@@ -10,19 +10,18 @@
 (begin-tx "Defining Keys and Capability")
 (env-keys ["admin-key", "user-key"])
 
-(load "./namespace.pact")
+;(load "./namespace.pact")
 (load "./main.pact")
 
-(create-table tbl_items)
-(create-table tbl_activities)
+;  (create-table tbl_items)
+;  (create-table tbl_activities)
 
 (welcome-message)
-
-(create-item "item123" "Kitties" "https://file.com" true (read-keyset "user-keyset") 'act1)
-(create-item "item124" "Doggies" "https://file.com" true (read-keyset "user-keyset") 'act2)
+(create-item "item123" "Kitties" "https://file.com" "Some Des" "10/10/22" true (read-keyset "user-keyset") 'act1)
+(create-item "item124" "Doggies" "https://file.com" "Some Des" "10/10/22" true (read-keyset "user-keyset") 'act2)
 (item-all)
 
-(test-capability (ACTIVITY))
+(test-capability (ALLOW_ENTRY 'item123))
 (transfer-item 'item123 'act3 (read-keyset 'bob-keyset))
 (item-details "item123")
 (activity-details 'act1)

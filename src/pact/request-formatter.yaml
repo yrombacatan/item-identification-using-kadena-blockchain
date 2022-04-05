@@ -1,0 +1,9 @@
+codeFile: main.pact
+data:
+  admin-keyset: ["1853c995c7d69283f3eecadfb32e3f69da7f615bcffbe342d2c0fd9e5949d4f6"]
+  user-keyset: ["f7f4a6f7848bd8a955b0a84f4da5d6c9000104c8c0cae4f5e31cb708efdbeaa0"]
+keyPairs: 
+  - public: 1853c995c7d69283f3eecadfb32e3f69da7f615bcffbe342d2c0fd9e5949d4f6
+    secret: e2248d0c932bfc13a32afcbef86fddd86e265efa6d343f95fbce48a2bc7228ed
+  - public: f7f4a6f7848bd8a955b0a84f4da5d6c9000104c8c0cae4f5e31cb708efdbeaa0
+    secret: a43b6230f0b741e04299c386bec45ddaef230e4bd6ff6d095af5e9dcd8115c47
