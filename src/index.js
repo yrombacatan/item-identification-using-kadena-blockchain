@@ -3,10 +3,13 @@ import ReactDOM  from "react-dom";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import App from "./App"
-import Documents from "./routes/documents";
 import Login from "./routes/login";
+import ItemList from "./routes/item-list";
+import ItemDetails from "./routes/item-details";
+import ItemMint from "./routes/item-mint";
 
 import "./index.css"
+
 
 const rootElement = document.getElementById('root')
 
@@ -15,7 +18,9 @@ ReactDOM.render(
         <Routes>
             <Route path="/" element={<Login />} />
             <Route element={<App />}>
-                <Route path="/document" element={<Documents />} />
+                <Route path="/items" element={<ItemList />} />
+                <Route path="/items/:id" element={<ItemDetails />} />
+                <Route path="/items/mint" element={<ItemMint />} />
             </Route>
         </Routes>
     </BrowserRouter>,
