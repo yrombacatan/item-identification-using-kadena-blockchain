@@ -1,67 +1,111 @@
-import React, { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import React from 'react'
+import { useParams, Link } from 'react-router-dom'
 
-import Pact from 'pact-lang-api'
-import kadenaAPI from '../kadena-config'
+const ItemRow = ({ data }) => {
+  return data.map((activity, _i) => {
+    return (
+      <tr className="whitespace-nowrap" key={_i}>
+          <td className="px-6 py-4 text-sm text-gray-500">
+            <div className="text-sm text-gray-500">{activity.event}</div>
+          </td>
+          <td className="px-6 py-4">
+            <div className="text-sm text-gray-500">{activity.from}</div>
+          </td>
+          <td className="px-6 py-4">
+              <div className="text-sm text-gray-500">{activity.to}</div>
+          </td>
+          <td className="px-6 py-4">
+              <div className="text-sm text-gray-500">{activity.date}</div>
+          </td>
+      </tr>
+    )
+  })
+}
+
+const itemActivityList = [
+  {
+    event: "Created",
+    from: "k:9fa7295ffe6cb6151a91682992c7652191f94c071260313f7b60657f75a9d8d9",
+    to: "k:9fa7295ffe6cb6151a91682992c7652191f94c071260313f7b60657f75a9d8d9",
+    date: "10/10/22"
+  },
+  {
+    event: "Transferred",
+    from: "k:9fa7295ffe6cb6151a91682992c7652191f94c071260313f7b60657f75a9d8d9",
+    to: "k:9fa7295ffe6cb6151a91682992c7652191f94c071260313f7b60657f75a9d8d9",
+    date: "10/10/22"
+  },
+  {
+    event: "Transferred",
+    from: "k:9fa7295ffe6cb6151a91682992c7652191f94c071260313f7b60657f75a9d8d9",
+    to: "k:9fa7295ffe6cb6151a91682992c7652191f94c071260313f7b60657f75a9d8d9",
+    date: "10/10/22"
+  },
+  {
+    event: "Transferred",
+    from: "k:9fa7295ffe6cb6151a91682992c7652191f94c071260313f7b60657f75a9d8d9",
+    to: "k:9fa7295ffe6cb6151a91682992c7652191f94c071260313f7b60657f75a9d8d9",
+    date: "10/10/22"
+  }
+]
 
 const ItemDetails = () => {
-  const [items, setItems] = useState('')
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(false)
   const params = useParams()
-
   console.log('Item Id:', params.id)
-  const fetchItems = async () => {
-    try {
-      const cmd = {
-        pactCode: "(jbsi.product_identification.item-all)",
-        meta: Pact.lang.mkMeta(
-          kadenaAPI.meta.sender,
-          kadenaAPI.meta.chainId,
-          kadenaAPI.meta.gasPrice,
-          kadenaAPI.meta.gasLimit,
-          kadenaAPI.meta.creationTime(),
-          kadenaAPI.meta.ttl
-        ),
-        networkId: kadenaAPI.meta.networkId
-      }
-
-      const { result } = await Pact.fetch.local(cmd, kadenaAPI.meta.localhost)
-      console.log(result)
-
-      if(result.status === 'failure') {
-        setItems('')
-        setLoading(false)
-        return setError(result.error.message)
-      }
-
-      setLoading(false)
-      setError(false)
-      setItems(result.data)
-
-    } catch (error) {
-      setItems('')
-      setLoading(false)
-      return setError(error.message)
-    }
-    
-  }
-
-  useEffect(() => {
-    let allow = true
-    //if(allow) fetchItems()
-    
-    // cleanup effect
-    return () => allow = false
-  }, [])
 
   return (
-    <div className='md:w-3/4 mx-auto text-center p-10'>
-      <h1 className='text-2xl font-semibold my-10'>Dashboard</h1>
+    <main className='md:w-3/4 mx-auto p-5'>
+      <h1 className='text-2xl font-semibold my-10 text-center'>Item Details</h1>
 
-      <button className='bg-blue-500 rounded shadow text-white font-semibold px-5 py-2 block mx-auto sm:ml-auto sm:mr-20'>Create</button>
+      <Link to={`/items/${params.id}/transfer`} 
+        className='bg-blue-500 rounded shadow text-white font-semibold px-5 py-2 sm:float-right mb-10 mx-auto sm:ml-auto'>Transfer</Link>
 
-    </div>  
+      <div className='flex flex-col gap-5 my-10 md:flex-row clear-both'>
+        <div className='w-full h-56 bg-gray-100 rounded shadow md:flex-none md:w-1/2'></div>
+        <div className='md:w-1/2'>
+          <h2 className='font-bold text-xl text-gray-700 mb-2'>Kitties</h2>
+          <div className='w-20 h-20 bg-gray-100 rounded'></div>
+
+          <div>
+            <p className='font-semibold text-gray-500 text-sm mt-5'>Owned by</p>
+            <p className='text-sm overflow-auto mt-1'>k:9fa7295ffe6cb6151a91682992c7652191f94c071260313f7b60657f75a9d8d9</p>
+          </div>
+
+          <div>
+            <p className='font-semibold text-gray-500 text-sm mt-5'>Description</p>
+            <p className='text-sm overflow-auto mt-1 ='>Great kitties muah, lovable, adorable unique items Great kitties muah, lovable, adorable unique items</p>
+          </div>
+          
+        </div>
+      </div>
+
+      <div>
+        <h2 className='font-bold text-xl text-gray-700 mb-2'>Item Activity</h2>
+        <div className="border-b border-gray-200 shadow overflow-auto">
+          <table className='w-full'>
+              <thead className="bg-gray-50">
+                  <tr>
+                      <th className="px-6 py-2 text-xs text-gray-500">
+                          Event
+                      </th>
+                      <th className="px-6 py-2 text-xs text-gray-500">
+                          From
+                      </th>
+                      <th className="px-6 py-2 text-xs text-gray-500">
+                          To
+                      </th>
+                      <th className="px-6 py-2 text-xs text-gray-500">
+                          Date
+                      </th>
+                  </tr>
+              </thead>
+              <tbody className="bg-white">
+                  <ItemRow data={itemActivityList} />
+              </tbody>
+          </table>
+        </div>
+      </div>
+    </main>  
   )
 }
 

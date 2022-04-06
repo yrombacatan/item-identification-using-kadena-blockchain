@@ -1,26 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 import Pact from 'pact-lang-api'
 import kadenaAPI from '../kadena-config'
-
-// const itemData = [
-//   {
-//     name: "Item 1",
-//     description: "Lorem impsum tro me kolpe sekl teuil erbon!",
-//     date: "10/10/22"
-//   },
-//   {
-//     name: "Item 1",
-//     description: "Lorem impsum tro me kolpe sekl teuil erbon!",
-//     date: "10/10/22"
-//   },
-//   {
-//     name: "Item 1",
-//     description: "Lorem impsum tro me kolpe sekl teuil erbon!",
-//     date: "10/10/22"
-//   }
-// ]
 
 const ItemRow = ({ data }) => {
   return data.map((list, _i) => {
@@ -55,6 +37,7 @@ const ItemList = () => {
   const [items, setItems] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
+  const navigate = useNavigate()
 
   const fetchItems = async () => {
     try {
@@ -101,10 +84,10 @@ const ItemList = () => {
   }, [])
 
   return (
-    <div className='md:w-3/4 mx-auto text-center p-10'>
+    <main className='md:w-3/4 mx-auto text-center p-5'>
       <h1 className='text-2xl font-semibold my-10'>Dashboard</h1>
 
-      <button className='bg-blue-500 rounded shadow text-white font-semibold px-5 py-2 block mx-auto sm:ml-auto sm:mr-20'>Create</button>
+      <button className='bg-blue-500 rounded shadow text-white font-semibold px-5 py-2 block mx-auto sm:ml-auto sm:mr-20' onClick={() => navigate('/items/mint')}>Create</button>
 
       <div className='w-40 h-36 bg-blue-300 mx-auto my-10 rounded'>
         <p className='font-bold bg-blue-500 text-white rounded-t'>User</p>
@@ -135,7 +118,7 @@ const ItemList = () => {
           </table>
       </div>
 
-    </div>  
+    </main>  
   )
 }
 
