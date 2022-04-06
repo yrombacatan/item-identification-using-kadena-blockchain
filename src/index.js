@@ -7,7 +7,7 @@ import Login from "./routes/login";
 import ItemList from "./routes/item-list";
 import ItemDetails from "./routes/item-details";
 import ItemMint from "./routes/item-mint";
-
+import ItemTransfer from "./routes/item-transfer";
 import "./index.css"
 
 
@@ -19,7 +19,8 @@ ReactDOM.render(
             <Route path="/" element={<Login />} />
             <Route element={<App />}>
                 <Route path="/items" element={<ItemList />} />
-                <Route path="/items/:id" element={<ItemDetails />} />
+                <Route path="/items/:id" element={<ItemDetails />}/>
+                <Route path="/items/:id/transfer" element={<ItemTransfer />} />
                 <Route path="/items/mint" element={<ItemMint />} />
             </Route>
         </Routes>
