@@ -47,11 +47,11 @@ const ItemMint = () => {
                     "user-keyset": [accountAddress],
                 },
                 keyPairs: {
-                    publicKey: "f7f4a6f7848bd8a955b0a84f4da5d6c9000104c8c0cae4f5e31cb708efdbeaa0",
-                    secretKey: "a43b6230f0b741e04299c386bec45ddaef230e4bd6ff6d095af5e9dcd8115c47",
+                    publicKey: "9fa7295ffe6cb6151a91682992c7652191f94c071260313f7b60657f75a9d8d9",
+                    secretKey: "a44dd7fd3dde24724c41f4c8c654cb78ec80f0b6c761c4520570c2aadf8bf4e5",
                 },
                 meta: Pact.lang.mkMeta(
-                    "1853c995c7d69283f3eecadfb32e3f69da7f615bcffbe342d2c0fd9e5949d4f6",
+                    "9fa7295ffe6cb6151a91682992c7652191f94c071260313f7b60657f75a9d8d9",
                     kadenaAPI.meta.chainId,
                     kadenaAPI.meta.gasPrice,
                     kadenaAPI.meta.gasLimit,
