@@ -33,7 +33,8 @@ const Login = () => {
             if(result.status === "failure") return setError(result.error.message)
             
             // save account address to localstorage
-            localStorage.setItem("accountAddress", result.data.account)
+
+            localStorage.setItem("accountAddress", JSON.stringify([result.data.account]))
 
             // redirect to homepage
             navigate("/items")
