@@ -82,11 +82,15 @@
     )
 
     (defun item-details:object(item_id)
-        (read tbl_items item_id)
+       {"body": (read tbl_items item_id), "keys": item_id, "activities": (item-activity item_id)}
     )
 
     (defun item-all:list()
         (map (item-details) (keys tbl_items))
+    )
+
+    (defun item-activity:object(item_id)
+        (select tbl_activities (where 'item_id (= item_id)))
     )
 
     (defun create-activity:object(

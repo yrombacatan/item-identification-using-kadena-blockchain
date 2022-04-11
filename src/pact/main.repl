@@ -23,7 +23,8 @@
 
 (test-capability (ALLOW_ENTRY 'item123))
 (transfer-item 'item123 'act3 (read-keyset 'bob-keyset))
-(item-details "item123")
-(activity-details 'act1)
-(activity-details 'act2)
-(activity-details 'act3)
+;(item-activity 'item123)
+  (item-details "item123")
+;  (activity-details 'act1)
+;  (activity-details 'act2)
+;  (activity-details 'act3)
