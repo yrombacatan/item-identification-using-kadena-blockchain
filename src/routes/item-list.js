@@ -4,20 +4,20 @@ import { Link, useNavigate } from 'react-router-dom'
 import Pact from 'pact-lang-api'
 import kadenaAPI from '../kadena-config'
 
-const ItemRow = ({ data }) => {
-  return data.map((list, _i) => {
+const ItemRow = ({ itemList }) => {
+  return itemList.map((item, _i) => {
     return (
       <tr className="whitespace-nowrap" key={_i}>
           <td className="px-6 py-4 text-sm text-gray-500">
-            <Link to={`/items/12345`} className="px-4 py-1 text-sm text-white bg-blue-400 rounded">{list.name}</Link>
+            <Link to={`/items/${item.keys}`} className="px-4 py-1 text-sm text-white bg-blue-400 rounded">{item.name}</Link>
           </td>
           <td className="px-6 py-4">
               <div className="text-sm text-gray-900">
-                {list.description}
+                {item.description}
               </div>
           </td>
           <td className="px-6 py-4">
-              <div className="text-sm text-gray-500">{list.date}</div>
+              <div className="text-sm text-gray-500">{item.date}</div>
           </td>
       </tr>
     )
@@ -55,17 +55,18 @@ const ItemList = () => {
       }
 
       const { result } = await Pact.fetch.local(cmd, kadenaAPI.meta.localhost)
-      console.log(result)
-
       if(result.status === 'failure') {
         setItems('')
         setLoading(false)
         return setError(result.error.message)
       }
+      
+      const itemList = result.data.map(v => ({...v.body, keys: v.keys}))
+      console.log(itemList)
 
       setLoading(false)
       setError(false)
-      setItems(result.data)
+      setItems(itemList)
 
     } catch (error) {
       setItems('')
@@ -113,7 +114,7 @@ const ItemList = () => {
               <tbody className="bg-white">
                   {loading && <TableMessage msg="Loading"/>}
                   {error && <TableMessage msg={error}/>}
-                  {items.length > 0 ? <ItemRow data={items} /> : <TableMessage msg="No items found, Mint now!" />}
+                  {items.length > 0 ? <ItemRow itemList={items} /> : <TableMessage msg="No items found, Mint now!" />}
               </tbody>
           </table>
       </div>

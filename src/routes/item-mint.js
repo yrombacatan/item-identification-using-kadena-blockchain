@@ -7,6 +7,9 @@ import { checkWallet, removedPrefixK } from '../wallet';
 import { v4 as uuidv4 } from 'uuid';
 
 const ItemMint = () => {
+    const [result, setResult] = useState('')
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState(false)
     const [requestKey, setRequestKey] = useState('')
     const [inputList, setInputList] = useState({
         name: '',
@@ -60,6 +63,7 @@ const ItemMint = () => {
                 ),
                 networkId: kadenaAPI.meta.networkId
             }
+            console.log(cmd)
             const res = await Pact.fetch.send(cmd, kadenaAPI.meta.localhost)
             setRequestKey(res.requestKeys[0])   
 
@@ -68,17 +72,36 @@ const ItemMint = () => {
         }
     }
 
+    const handleListen = async (requestKey) => {
+        try {
+          setLoading(true)
+          setError(false)
+          setResult('')
+    
+          const { result, gas } = await Pact.fetch.listen({ listen: requestKey }, kadenaAPI.meta.localhost)
+          if(result.status === 'failure') {
+            setLoading(false)
+            return setError(result.error.message)
+          }
+    
+          console.log(result)
+          setResult(result)
+          setLoading(false)
+        } catch (error) {
+          setLoading(false)
+          setError(error.message)
+          console.log('im here')
+        }
+      }
+
     useEffect(() => {
         if(! requestKey) return
-
-        const handleListen = async (requestKey) => {
-            const res = await Pact.fetch.listen({listen: requestKey}, kadenaAPI.meta.localhost)
-            console.log(res)
-        }
-
-        handleListen(requestKey)
+        let allow = true
+        if(allow) handleListen(requestKey)
+        
+        // cleanup effect
+        return () => allow = false
     }, [requestKey])
-
 
     return (
         <main className="md:w-3/4 mx-auto flex justify-center min-h-screen items-center p-5">
@@ -87,19 +110,19 @@ const ItemMint = () => {
                 <div className='w-36 h-36 bg-gray-500 rounded mx-auto my-10'></div>
                 <div className='sm:w-1/2 mx-auto'>
                     <div className='flex flex-col mb-5 sm:flex-row sm:items-center'>
-                        <label className='text-left font-semibold text-gray-500 sm:basis-1/4 sm:text-center sm:border-l'>Name</label>
+                        <label className='text-left font-semibold text-gray-500 sm:basis-1/4'>Name</label>
                         <input type="text" name='name' className='flex-auto border p-2 rounded' 
                             value={inputList.name} 
                             onChange={handleInputChange}/>
                     </div>
                     <div className='flex flex-col mb-5 sm:flex-row sm:items-center'>
-                        <label className='text-left font-semibold text-gray-500 sm:basis-1/4 sm:text-center sm:border-l'>Description</label>
+                        <label className='text-left font-semibold text-gray-500 sm:basis-1/4'>Description</label>
                         <input type="text" name='description' className='flex-auto border p-2 rounded' 
                             value={inputList.description} 
                             onChange={handleInputChange}/>
                     </div>
                     <div className='flex flex-col mb-5 sm:flex-row sm:items-center'>
-                        <label className='text-left font-semibold text-gray-500 sm:basis-1/4 sm:text-center sm:border-l'>Attributes</label>
+                        <label className='text-left font-semibold text-gray-500 sm:basis-1/4'>Attributes</label>
                         <input type="text" name='attributes' className='flex-auto border p-2 rounded' 
                             value={inputList.attributes} 
                             onChange={handleInputChange}/>
