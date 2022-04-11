@@ -69,7 +69,7 @@ var kadenaAPI = {
     ttl: 28800,
     //sender === gas payer of the transaction
     //  set to our gas station account defined in memory-wall-gas-station.pact
-    sender: "k:40629476d403abc78584e5aec835683eaf2ba46441a7a4a89fa30982e87d18ea",
+    sender: "k:9fa7295ffe6cb6151a91682992c7652191f94c071260313f7b60657f75a9d8d9",
     //nonce here doesnt matter since the tx will never have the same hash
     nonce: "some nonce that doesnt matter",
   },
