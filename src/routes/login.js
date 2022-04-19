@@ -1,8 +1,7 @@
 import React, { useState } from "react"
 import { useNavigate } from "react-router-dom";
 
-import Pact from "pact-lang-api"
-import kadenaAPI from "../kadena-config"
+import { connectWallet, fetchAccount } from "../wallet";
 
 const Login = () => {
     const [address, setAddress] = useState('')
@@ -11,36 +10,21 @@ const Login = () => {
 
     const handleInputChange = e => setAddress(e.target.value)
 
+   
     const handleConnectButton = async () => {
-        // check address if exist on the blockchain
+        let wallet = ''
+        if(window?.kadena?.isKadena === true) {
+            wallet = 'x-wallet'
+        } 
+
         try {
-            const cmd = {
-                pactCode: `(coin.details "${address}")`,
-                meta: Pact.lang.mkMeta(
-                    address,
-                    kadenaAPI.meta.chainId,
-                    kadenaAPI.meta.gasPrice,
-                    kadenaAPI.meta.gasLimit,
-                    kadenaAPI.meta.creationTime(),
-                    kadenaAPI.meta.ttl
-                  ),
-                networkId: kadenaAPI.meta.networkId,
-            }
-
-            const { result } = await Pact.fetch.local(cmd, kadenaAPI.meta.host)
-            console.log(result)
-
-            if(result.status === "failure") return setError(result.error.message)
-            
-            // save account address to localstorage
-
-            localStorage.setItem("accountAddress", JSON.stringify([result.data.account]))
-
-            // redirect to homepage
+            await fetchAccount(address)
+            await connectWallet(address, wallet)
+    
+            localStorage.setItem("accountAddress", JSON.stringify([address]))
             navigate("/items")
-
         } catch (error) {
-            setError(error.message)
+            console.log(error.message)
         }
     }
    
