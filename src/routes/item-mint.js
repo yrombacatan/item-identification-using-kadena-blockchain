@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Pact from 'pact-lang-api'
 
 import kadenaAPI from '../kadena-config'
-import { checkWallet, removedPrefixK } from '../wallet';
+import { checkWallet, signTransaction } from '../wallet';
 
 import { v4 as uuidv4 } from 'uuid';
 
@@ -32,40 +32,29 @@ const ItemMint = () => {
 
     const handleMintButton = async () => {
         try {
-            const { status, data } = await checkWallet()
-
-            if(status === "error") {
-                return console.log(data)
-            }
-
+            const account = checkWallet()
             const date = getDate()
             const itemId = uuidv4()
             const activityId = uuidv4() 
-            const accountAddress = removedPrefixK(data)
             const url = "https://some-fixed-ipfs-url.com"
 
             const cmd = {
                 pactCode: `(jbsi.product_identification.create-item "${itemId}" "${inputList.name}" "${url}" "${inputList.description}" "${date}" true (read-keyset "user-keyset") "${activityId}")`,
+                caps: [],
                 envData: {
-                    "user-keyset": [accountAddress],
+                    "user-keyset": [account],
                 },
-                keyPairs: {
-                    publicKey: "9fa7295ffe6cb6151a91682992c7652191f94c071260313f7b60657f75a9d8d9",
-                    secretKey: "a44dd7fd3dde24724c41f4c8c654cb78ec80f0b6c761c4520570c2aadf8bf4e5",
-                },
-                meta: Pact.lang.mkMeta(
-                    "9fa7295ffe6cb6151a91682992c7652191f94c071260313f7b60657f75a9d8d9",
-                    kadenaAPI.meta.chainId,
-                    kadenaAPI.meta.gasPrice,
-                    kadenaAPI.meta.gasLimit,
-                    kadenaAPI.meta.creationTime(),
-                    kadenaAPI.meta.ttl
-                ),
-                networkId: kadenaAPI.meta.networkId
+                sender: `k:${account}`,
+                chainId: kadenaAPI.meta.chainId,
+                gasLimit: kadenaAPI.meta.gasLimit,
+                gasPrice: kadenaAPI.meta.gasPrice,
+                signingPubKey: account, // account with no prefix k here
+                ttl: kadenaAPI.meta.creationTime(),
+                networkId: kadenaAPI.meta.networkId,
             }
-            console.log(cmd)
-            const res = await Pact.fetch.send(cmd, kadenaAPI.meta.localhost)
-            setRequestKey(res.requestKeys[0])   
+
+            const { requestKeys } = await signTransaction(cmd)
+            setRequestKey(requestKeys[0])   
 
         } catch (error) {
             console.log(error.message)
