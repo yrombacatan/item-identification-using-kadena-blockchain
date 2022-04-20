@@ -21,7 +21,6 @@
         url: string
         description: string
         date: string
-        status: bool
         guard: guard
     )
     (defschema activities
@@ -48,7 +47,6 @@
         url:string
         description:string
         date:string
-        status:bool
         guard:guard
         act_id:string
         )
@@ -57,14 +55,12 @@
         (enforce (!= item_id "") "Item id is required")
         (enforce (!= name "") "Item name id is required")
         (enforce (!= url "") "Url is required")
-        (enforce (!= status "") "Status is required")
 
         (insert tbl_items item_id {
             'name: name,
             'url: url,
             'description: description,
             'date: date,
-            'status: status,
             'guard: guard
         })
         
@@ -74,7 +70,7 @@
                     item_id 
                     guard 
                     guard
-                    (format-time "%F" (time "2022-03-29T08:30:00Z")) 
+                    date 
                     'creation)
             )
 
@@ -121,6 +117,7 @@
     (defun transfer-item:object(
             item_id:string
             act_id:string
+            date:string
             receiver:guard
         )
 
@@ -139,7 +136,7 @@
                     item_id 
                     sender 
                     receiver 
-                    (format-time "%F" (time "2022-03-29T08:30:00Z")) 
+                    date 
                     'transfer)
             )
 
