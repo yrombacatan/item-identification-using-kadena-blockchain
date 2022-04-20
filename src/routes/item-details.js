@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 
 import Pact from "pact-lang-api"
 import kadenaAPI from "../kadena-config"
@@ -31,6 +31,7 @@ const ItemDetails = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
   const params = useParams()
+  const nav = useNavigate()
 
   const fetchItem = async (id) => {
     try {
@@ -90,8 +91,12 @@ const ItemDetails = () => {
         <main className='md:w-3/4 mx-auto p-5'>
         <h1 className='text-2xl font-semibold my-10 text-center'>Item Details</h1>
 
-        <Link to={`/items/${item.keys}/transfer`} 
-          className='bg-blue-500 rounded shadow text-white font-semibold px-5 py-2 sm:float-right mb-10 mx-auto sm:ml-auto'>Transfer</Link>
+        <div className='flex gap-5 sm:justify-end'>
+          <button onClick={() => nav(`/items/${item.keys}/transfer`)} 
+            className='bg-blue-500 rounded shadow text-white font-semibold px-5 py-2'>Transfer</button>
+          <button onClick={() => nav(`/items`)} 
+          className='bg-gray-200 rounded shadow text-black font-semibold px-5 py-2'>Back</button>
+        </div>
 
         <div className='flex flex-col gap-5 my-10 md:flex-row clear-both'>
           <div className='w-full h-56 bg-gray-100 rounded shadow md:flex-none md:w-1/2'></div>

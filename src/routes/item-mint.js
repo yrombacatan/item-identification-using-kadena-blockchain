@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import Pact from 'pact-lang-api'
+import { useNavigate } from 'react-router-dom'
 
 import kadenaAPI from '../kadena-config'
 import { checkWallet, signTransaction } from '../wallet';
+import { getDate } from "../utils"
 
 import { v4 as uuidv4 } from 'uuid';
 
@@ -16,18 +18,11 @@ const ItemMint = () => {
         description: '',
         attributes: '',
     })
+    const nav = useNavigate()
 
     const handleInputChange = (e) => {
         const { name, value } = e.target
         setInputList(prev => ({...prev, [name]: value }))
-    }
-
-    const getDate = () => {
-        const date = new Date()
-        const month = date.getMonth()
-        const day = date.getDate()
-        const year = date.getFullYear()
-        return `${day}/${month + 1}/${year}`
     }
 
     const handleMintButton = async () => {
@@ -39,7 +34,7 @@ const ItemMint = () => {
             const url = "https://some-fixed-ipfs-url.com"
 
             const cmd = {
-                pactCode: `(jbsi.product_identification.create-item "${itemId}" "${inputList.name}" "${url}" "${inputList.description}" "${date}" true (read-keyset "user-keyset") "${activityId}")`,
+                pactCode: `(jbsi.product_identification.create-item "${itemId}" "${inputList.name}" "${url}" "${inputList.description}" "${date}" (read-keyset "user-keyset") "${activityId}")`,
                 caps: [],
                 envData: {
                     "user-keyset": [account],
@@ -117,8 +112,9 @@ const ItemMint = () => {
                             onChange={handleInputChange}/>
                     </div>
                 </div>
-                <div>
-                    <button className="py-2 px-10 bg-blue-500 rounded shadow font-medium text-white" onClick={handleMintButton}>Submit</button>
+                <div className='flex justify-center gap-5'>
+                    <button className="py-2 px-5 bg-blue-500 rounded shadow font-medium text-white" onClick={handleMintButton}>Submit</button>
+                    <button className="py-2 px-5 bg-gray-200 rounded shadow font-medium text-black" onClick={() => nav('/items')}>Cancel</button>
                 </div>
             </div>
         </main>
