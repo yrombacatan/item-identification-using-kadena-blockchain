@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 
 import Pact from "pact-lang-api"
 import kadenaAPI from "../kadena-config"
+import { checkWallet, signTransaction } from "../wallet"
+import { getDate } from '../utils'
 
 import { v4 as uuidv4 } from 'uuid';
 
@@ -14,6 +16,7 @@ const ItemTransfer = () => {
   const [requestKey, setRequestkey] = useState('')
   const [result, setResult] = useState('')
   const params = useParams()
+  const nav = useNavigate()
 
   const fetchItem = async (id) => {
     try {
@@ -55,28 +58,25 @@ const ItemTransfer = () => {
 
   const handleTransfer = async () => {
     try {
+      const account = checkWallet()
       const activityId = uuidv4()
+      const date = getDate()
       const cmd = {
-        pactCode: `(jbsi.product_identification.transfer-item "${item.keys}" "${activityId}" (read-keyset "receiver-keyset"))`,
+        pactCode: `(jbsi.product_identification.transfer-item "${item.keys}" "${activityId}" "${date}" (read-keyset "receiver-keyset"))`,
+        caps: [],
         envData: {
           "receiver-keyset": [receiverAddress],
         },
-        keyPairs: {
-            publicKey: "9fa7295ffe6cb6151a91682992c7652191f94c071260313f7b60657f75a9d8d9",
-            secretKey: "a44dd7fd3dde24724c41f4c8c654cb78ec80f0b6c761c4520570c2aadf8bf4e5",
-        },
-        meta: Pact.lang.mkMeta(
-          kadenaAPI.meta.sender,
-          kadenaAPI.meta.chainId,
-          kadenaAPI.meta.gasPrice,
-          kadenaAPI.meta.gasLimit,
-          kadenaAPI.meta.creationTime(),
-          kadenaAPI.meta.ttl
-        ),
-        networkId: kadenaAPI.meta.networkId
+        sender: `k:${account}`,
+        chainId: kadenaAPI.meta.chainId,
+        gasLimit: kadenaAPI.meta.gasLimit,
+        gasPrice: kadenaAPI.meta.gasPrice,
+        signingPubKey: account, // account with no prefix k here
+        ttl: kadenaAPI.meta.creationTime(),
+        networkId: kadenaAPI.meta.networkId,
       }
 
-      const { requestKeys } = await Pact.fetch.send(cmd, kadenaAPI.meta.localhost)
+      const { requestKeys } = await signTransaction(cmd)
       setRequestkey(requestKeys[0])
 
     } catch (error) {
@@ -131,10 +131,7 @@ const ItemTransfer = () => {
 
       {item && (
         <main className='md:w-3/4 mx-auto p-5'>
-        <h1 className='text-2xl font-semibold my-10 text-center'>Item Details</h1>
-
-        <Link to={`/items/${item.keys}/transfer`} 
-          className='bg-blue-500 rounded shadow text-white font-semibold px-5 py-2 sm:float-right mb-10 mx-auto sm:ml-auto'>Transfer</Link>
+        <h1 className='text-2xl font-semibold my-10 text-center'>Item Transfer</h1>
 
         <div className='flex flex-col gap-5 my-10 md:flex-row clear-both'>
           <div className='w-full h-56 bg-gray-100 rounded shadow md:flex-none md:w-1/2'></div>
@@ -155,16 +152,21 @@ const ItemTransfer = () => {
           </div>
         </div>
 
-        <div className="flex justify-center flex-col">
-            <div>
-                <label className="block">Account Address</label>
-                <input name="receiver-address" className="w-full border p-2 rounded"
-                  value={receiverAddress}
-                  onChange={handleInputChange}/>
-            </div>
+        <div>
+            <label className="block">Account Address</label>
+            <input name="receiver-address" className="w-full border p-2 rounded"
+              value={receiverAddress}
+              onChange={handleInputChange}/>
+        </div>
+
+        <div className="flex gap-5">
             <div>
                 <button className='bg-blue-500 rounded shadow text-white font-semibold px-5 py-2 mt-5'
                   onClick={handleTransfer}>Submit</button>
+            </div>
+            <div>
+                <button className='bg-gray-200 rounded shadow text-black font-semibold px-5 py-2 mt-5'
+                  onClick={() => nav(`/items/${params.id}`)}>Cancel</button>
             </div>
         </div>
       </main> 
