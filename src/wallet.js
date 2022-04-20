@@ -1,9 +1,10 @@
 import Pact from 'pact-lang-api'
 import kadenaAPI from "./kadena-config";
 
-const connectWallet = async (account, walletType = 'zelcore') => {
+const connectWallet = async (account) => {
+    const hasXwallet = window?.kadena?.isKadena === true
     if(account) {
-        if(walletType === 'x-wallet') {
+        if(hasXwallet) {
                 await window.kadena.request({
                     method: "kda_disconnect",
                     networkId: kadenaAPI.meta.networkId,
@@ -21,8 +22,7 @@ const connectWallet = async (account, walletType = 'zelcore') => {
                     throw new Error("Tried to connect to X Wallet but not with the account entered. Make sure you have logged into the right account in X Wallet")
                 }
         }
-
-        if(walletType === 'zelcore') {
+        else {
             const host = "http://localhost:9467/v1/accounts"
             const res = await fetch(host, {
                 method: 'POST',
@@ -140,7 +140,7 @@ const signTransaction = async (cmdToSign) => {
     console.log(parseLocalRes)
 
     if(parseLocalRes?.result?.status !== 'success') {
-        throw new Error("Coudn't send transaction")
+        throw new Error(parseLocalRes?.result?.error?.message)
     } 
 
     // test request in mainnet

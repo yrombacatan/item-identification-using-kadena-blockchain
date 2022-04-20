@@ -12,14 +12,9 @@ const Login = () => {
 
    
     const handleConnectButton = async () => {
-        let wallet = ''
-        if(window?.kadena?.isKadena === true) {
-            wallet = 'x-wallet'
-        } 
-
         try {
             await fetchAccount(address)
-            await connectWallet(address, wallet)
+            await connectWallet(address)
     
             localStorage.setItem("accountAddress", JSON.stringify([address]))
             navigate("/items")
