@@ -39,7 +39,7 @@ const connectWallet = async (account) => {
                 throw new Error(data)
             }
 
-            if(! data.includes(account)) {
+            if(! data.includes(account) && ! data.includes(`k:${account}`)) {
                 throw new Error("Tried to connect to X Wallet but not with the account entered. Make sure you have logged into the right account in X Wallet")
             }
         }
@@ -73,11 +73,7 @@ const fetchAccount = async (address) => {
 
 const checkWallet = () => {
     if(localStorage.getItem('accountAddress')) {
-        const account = JSON.parse(localStorage.getItem('accountAddress'))
-        if(account[0].at(0) === 'k') { // removed prefix "k"
-            account[0].slice(2)
-        } 
-        return account[0]
+        return JSON.parse(localStorage.getItem('accountAddress'))
     } 
 
     throw new Error("Account is required, please connect account address.")

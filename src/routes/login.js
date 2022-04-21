@@ -13,10 +13,10 @@ const Login = () => {
    
     const handleConnectButton = async () => {
         try {
-            await fetchAccount(address)
-            await connectWallet(address)
+            const { data } = await fetchAccount(address)
+            await connectWallet(data.account)
     
-            localStorage.setItem("accountAddress", JSON.stringify([address]))
+            localStorage.setItem("accountAddress", JSON.stringify(data.account))
             navigate("/items")
         } catch (error) {
             console.log(error.message)

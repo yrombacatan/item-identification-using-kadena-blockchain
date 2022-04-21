@@ -31,7 +31,7 @@ const ItemDetails = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
   const params = useParams()
-  const nav = useNavigate()
+  const navigate = useNavigate()
 
   const fetchItem = async (id) => {
     try {
@@ -92,9 +92,9 @@ const ItemDetails = () => {
         <h1 className='text-2xl font-semibold my-10 text-center'>Item Details</h1>
 
         <div className='flex gap-5 sm:justify-end'>
-          <button onClick={() => nav(`/items/${item.keys}/transfer`)} 
+          <button onClick={() => navigate(`/items/${item.keys}/transfer`)} 
             className='bg-blue-500 rounded shadow text-white font-semibold px-5 py-2'>Transfer</button>
-          <button onClick={() => nav(`/items`)} 
+          <button onClick={() => navigate(`/items`)} 
           className='bg-gray-200 rounded shadow text-black font-semibold px-5 py-2'>Back</button>
         </div>
 

@@ -16,7 +16,7 @@ const ItemTransfer = () => {
   const [requestKey, setRequestkey] = useState('')
   const [result, setResult] = useState('')
   const params = useParams()
-  const nav = useNavigate()
+  const navigate = useNavigate()
 
   const fetchItem = async (id) => {
     try {
@@ -153,7 +153,7 @@ const ItemTransfer = () => {
         </div>
 
         <div>
-            <label className="block">Account Address</label>
+            <label className="block font-semibold text-gray-500">Account Address</label>
             <input name="receiver-address" className="w-full border p-2 rounded"
               value={receiverAddress}
               onChange={handleInputChange}/>
@@ -166,7 +166,7 @@ const ItemTransfer = () => {
             </div>
             <div>
                 <button className='bg-gray-200 rounded shadow text-black font-semibold px-5 py-2 mt-5'
-                  onClick={() => nav(`/items/${params.id}`)}>Cancel</button>
+                  onClick={() => navigate(`/items/${params.id}`)}>Cancel</button>
             </div>
         </div>
       </main> 
