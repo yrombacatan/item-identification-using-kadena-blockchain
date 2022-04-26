@@ -88,33 +88,33 @@ const ItemMint = () => {
     }, [requestKey])
 
     return (
-        <main className="md:w-3/4 mx-auto flex justify-center min-h-screen items-center p-5">
-            <div className='text-center w-full'>
+        <main className="md:w-full mx-auto flex justify-center min-h-screen items-center p-5">
+            <div className='text-center w-3/4 bg-white p-10 rounded'>
                 <h1 className='text-2xl font-bold'>Mint your Item</h1>
-                <div className='w-36 h-36 bg-gray-500 rounded mx-auto my-10'></div>
+                <div className='w-36 h-36 bg-gray-300 rounded mx-auto my-10'></div>
                 <div className='sm:w-1/2 mx-auto'>
                     <div className='flex flex-col mb-5 sm:flex-row sm:items-center'>
                         <label className='text-left font-semibold text-gray-500 sm:basis-1/4'>Name</label>
-                        <input type="text" name='name' className='flex-auto border p-2 rounded' 
+                        <input type="text" name='name' className='flex-auto border p-2 bg-gray-100 rounded' 
                             value={inputList.name} 
                             onChange={handleInputChange}/>
                     </div>
                     <div className='flex flex-col mb-5 sm:flex-row sm:items-center'>
                         <label className='text-left font-semibold text-gray-500 sm:basis-1/4'>Description</label>
-                        <input type="text" name='description' className='flex-auto border p-2 rounded' 
+                        <input type="text" name='description' className='flex-auto border p-2 bg-gray-100 rounded' 
                             value={inputList.description} 
                             onChange={handleInputChange}/>
                     </div>
                     <div className='flex flex-col mb-5 sm:flex-row sm:items-center'>
                         <label className='text-left font-semibold text-gray-500 sm:basis-1/4'>Attributes</label>
-                        <input type="text" name='attributes' className='flex-auto border p-2 rounded' 
+                        <input type="text" name='attributes' className='flex-auto border p-2 bg-gray-100 rounded' 
                             value={inputList.attributes} 
                             onChange={handleInputChange}/>
                     </div>
                 </div>
                 <div className='flex justify-center gap-5'>
-                    <button className="py-2 px-5 bg-blue-500 rounded shadow font-medium text-white" onClick={handleMintButton}>Submit</button>
-                    <button className="py-2 px-5 bg-gray-200 rounded shadow font-medium text-black" onClick={() => navigate('/items')}>Cancel</button>
+                    <button className="py-2 px-5 bg-indigo-500 hover:bg-indigo-400 rounded shadow font-medium text-white" onClick={handleMintButton}>Submit</button>
+                    <button className="py-2 px-5 bg-gray-200 hover:bg-gray-100 rounded shadow font-medium text-black" onClick={() => navigate('/items')}>Cancel</button>
                 </div>
             </div>
         </main>

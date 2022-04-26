@@ -24,16 +24,16 @@ const Login = () => {
     }
    
     return (
-       <main className="w-full flex justify-center">
+       <main className="w-full h-screen flex justify-center">
            <div className="md:w-1/2 md:mt-56 mt-10 py-10 px-5">
                 <h1 className="text-2xl font-semibold">Product Identification  | <span className="text-neutral-400">Powered by Kadena</span></h1>
 
                 <div className="flex flex-col mt-10">
-                    <label className="text-gray-500 font-bold">Wallety Address</label>
+                    <label className="text-gray-500 font-bold">Wallet Address</label>
                     <input className="p-2 border rounded" value={address} onChange={handleInputChange}/>
                 </div>
                 
-                <button className="px-5 py-2 bg-indigo-500 rounded shadow text-white mt-10"
+                <button className="px-5 py-2 bg-indigo-500 hover:bg-indigo-400 rounded shadow text-white mt-10"
                     onClick={handleConnectButton}>Connect</button>
            </div>
        </main>

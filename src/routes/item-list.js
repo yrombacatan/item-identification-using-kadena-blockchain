@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
+
 import Pact from 'pact-lang-api'
 import kadenaAPI from '../kadena-config'
 
@@ -85,29 +86,32 @@ const ItemList = () => {
   }, [])
 
   return (
-    <main className='md:w-3/4 mx-auto text-center p-5'>
-      <h1 className='text-2xl font-semibold my-10'>Dashboard</h1>
+    <main className='h-100 text-center p-10'>
+      <h1 className='text-2xl font-semibold text-center'>Dashboard</h1>
+      
 
-      <button className='bg-blue-500 rounded shadow text-white font-semibold px-5 py-2 block mx-auto sm:ml-auto sm:mr-20' onClick={() => navigate('/items/mint')}>Create</button>
-
-      <div className='w-40 h-36 bg-blue-300 mx-auto my-10 rounded'>
-        <p className='font-bold bg-blue-500 text-white rounded-t'>User</p>
+      <div className='w-100 h-80 p-10 my-10 mx-auto bg-white rounded'>
+      <button className='bg-indigo-500 hover:bg-indigo-400 rounded shadow text-white font-semibold px-16 py-2 block mx-auto sm:ml-auto sm:mr-20' onClick={() => navigate('/items/mint')}><i class="fa-solid fa-plus"></i>Create</button>
+      <div className='w-40 h-28 bg-indigo-300 mx-auto rounded'>
+        <p className='font-bold bg-indigo-500 text-white rounded-t'>User</p>
       </div>
 
-      <p className='font-bold text-gray-700 overflow-auto'>k:40629476d403abc78584e5aec835683eaf2ba46441a7a4a89fa30982e87d18ea</p>
-
-      <div className="border-b border-gray-200 shadow mt-10">
-          <table className='w-full'>
-              <thead className="bg-gray-50">
+      <p className='font-bold text-gray-700 my-10 overflow-auto'>k:40629476d403abc78584e5aec835683eaf2ba46441a7a4a89fa30982e87d18ea</p>
+      </div>
+      
+      <div className="bg-white mt-10 p-10 rounded">
+      <p className='font-semibold text-left'>ITEM LIST</p>
+          <table className='w-full border-collapse my-10'>
+              <thead className="bg-gray-400">
                   <tr>
-                      <th className="px-6 py-2 text-xs text-gray-500">
+                      <th className="px-6 py-2 text-xs text-white">
                           Item Name
                       </th>
-                      <th className="px-6 py-2 text-xs text-gray-500">
+                      <th className="px-6 py-2 text-xs text-white">
                           Description
                       </th>
-                      <th className="px-6 py-2 text-xs text-gray-500">
-                          Recieved Date
+                      <th className="px-6 py-2 text-xs text-white">
+                          Received Date
                       </th>
                   </tr>
               </thead>

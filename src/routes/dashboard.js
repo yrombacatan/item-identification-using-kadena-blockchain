@@ -9,16 +9,16 @@ const ActivityRow = ({ activityList }) => {
     return (
       <tr className="whitespace-nowrap" key={_i}>
           <td className="px-6 py-4 text-sm text-gray-500">
-            <div className="text-sm text-gray-500">{activity.event}</div>
+            {/* <div className="text-sm text-gray-500">{activity.event}</div> */}
+            <div className="text-sm text-gray-500">Item Name</div>
           </td>
           <td className="px-6 py-4">
-            <div className="text-sm text-gray-500">{activity.from.keys}</div>
+            {/* <div className="text-sm text-gray-500">{activity.from.keys}</div> */}
+            <div className="text-sm text-gray-500">Description</div>
           </td>
           <td className="px-6 py-4">
-              <div className="text-sm text-gray-500">{activity.to.keys}</div>
-          </td>
-          <td className="px-6 py-4">
-              <div className="text-sm text-gray-500">{activity.date}</div>
+              {/* <div className="text-sm text-gray-500">{activity.to.keys}</div> */}
+              <div className="text-sm text-gray-500">Item Activity</div>
           </td>
       </tr>
     )
@@ -32,11 +32,10 @@ const Dashboard = () => {
   const [error, setError] = useState(false)
   const params = useParams()
   const navigate = useNavigate()
-
-  const fetchItem = async (id) => {
+  const fetchItems = async () => {
     try {
       const cmd = {
-        pactCode: `(jbsi.product_identification.item-details "${id}")`,
+        pactCode: "(jbsi.product_identification.item-all)",
         meta: Pact.lang.mkMeta(
           kadenaAPI.meta.sender,
           kadenaAPI.meta.chainId,
@@ -49,69 +48,56 @@ const Dashboard = () => {
       }
 
       const { result } = await Pact.fetch.local(cmd, kadenaAPI.meta.localhost)
-
       if(result.status === 'failure') {
         setItem('')
-        setActivities('')
         setLoading(false)
         return setError(result.error.message)
       }
-
-      const item = {...result.data.body, keys: result.data.keys }
-      const activityList = [...result.data.activities ]
+      
+      const itemList = result.data.map(v => ({...v.body, keys: v.keys}))
+      console.log(itemList)
 
       setLoading(false)
       setError(false)
-      setItem(item)
-      setActivities(activityList)
+      setItem(itemList)
 
     } catch (error) {
       setItem('')
-      setActivities('')
       setLoading(false)
       return setError(error.message)
     }
+    
   }
 
   useEffect(() => {
     let allow = true
-    if(allow) fetchItem(params.id)
+    if(allow) fetchItems()
     
     // cleanup effect
     return () => allow = false
-  }, [params.id])
-
+  }, [])
 
   return (
     <>
-      {loading && <p>Loading...</p>}
-      {error && <p>{error}</p>}
+      {/* {loading && <p>Loading...</p>}
+      {error && <p>{error}</p>} */}
 
-      {item && (
-        <main className='md:w-3/4 mx-auto p-5'>
+        <main className='md:w-3/4 mx-0 p-5'>
         <h1 className='text-2xl font-semibold my-10 text-center'>Dashboard</h1>
 
         <div className='flex gap-5 sm:justify-end'>
           <button
-            className='bg-blue-500 rounded shadow text-white font-semibold px-5 py-2'>Create</button>
-          <button onClick={() => navigate(`/items`)} 
-          className='bg-gray-200 rounded shadow text-black font-semibold px-5 py-2'>Back</button>
+            className='bg-blue-500 rounded shadow text-white font-semibold px-12 py-2'>Create</button>
         </div>
 
         <div className='flex flex-col gap-5 my-10 md:flex-row clear-both'>
-          <div className='w-full h-56 bg-gray-100 rounded shadow md:flex-none md:w-1/2'></div>
-          <div className='md:w-1/2'>
-            <h2 className='font-bold text-xl text-gray-700 mb-2'>{item.name}</h2>
-            <div className='w-20 h-20 bg-gray-100 rounded'></div>
+          <div className='md:w-full'>
+            {/* <h2 className='font-bold text-xl text-gray-700 mb-2'>{item.name}</h2> */}
+            <div className='w-80 h-20 bg-gray-100 rounded'></div>
 
             <div>
               <p className='font-semibold text-gray-500 text-sm mt-5'>Owned by</p>
-              <p className='text-sm overflow-auto mt-1'>{item.guard.keys}</p>
-            </div>
-
-            <div>
-              <p className='font-semibold text-gray-500 text-sm mt-5'>Description</p>
-              <p className='text-sm overflow-auto mt-1 ='>{item.description}</p>
+              {/* <p className='text-sm overflow-auto mt-1'>{item.guard.keys}</p> */}
             </div>
             
           </div>
@@ -135,13 +121,14 @@ const Dashboard = () => {
                     </tr>
                 </thead>
                 <tbody className="bg-white">
-                  { activities ? <ActivityRow activityList={activities}/> : null} 
+                  {/* { activities ? <ActivityRow activityList={activities}/> : null}  */}
+                  {/* <ActivityRow/> */}
                 </tbody>
             </table>
           </div>
         </div>
       </main> 
-      )}
+  
     </>
   )
 }

@@ -8,7 +8,9 @@ import ItemList from "./routes/item-list";
 import ItemDetails from "./routes/item-details";
 import ItemMint from "./routes/item-mint";
 import ItemTransfer from "./routes/item-transfer";
+import Dashboard from "./routes/dashboard";
 import "./index.css"
+import styles from './styles/globals.css'
 
 
 const rootElement = document.getElementById('root')
@@ -16,7 +18,8 @@ const rootElement = document.getElementById('root')
 ReactDOM.render(
     <BrowserRouter>
         <Routes>
-            <Route path="/" element={<Login />} />
+            {/* <Route path="/" element={<Login />} /> */}
+            <Route path="/" element={<ItemList />} />
             <Route element={<App />}>
                 <Route path="/items" element={<ItemList />} />
                 <Route path="/items/:id" element={<ItemDetails />}/>
