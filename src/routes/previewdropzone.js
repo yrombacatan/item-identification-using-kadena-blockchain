@@ -15,6 +15,8 @@ const PreviewDropzone = (props) => {
           })
         )
       );
+
+      props.onCapture(acceptedFiles[0])
     },
   });
 
@@ -51,7 +53,6 @@ const PreviewDropzone = (props) => {
           <input
             {...getInputProps()}
             name="itemImage"
-            onInput={props.onCapture}
           />
           <p>Drop Image here</p>
         </div>

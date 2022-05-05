@@ -14,7 +14,7 @@ const ipfsClient = create("https://ipfs.infura.io:5001/api/v0");
 
 const ItemMint = () => {
   // image buffer
-  const [imageBuffer, setimageBuffer] = useState({
+  const [imageBuffer, setImageBuffer] = useState({
     buffer: "",
     type: "",
     name: "",
@@ -31,22 +31,17 @@ const ItemMint = () => {
   });
 
   // Get file from user
-  const CaptureFile = (event) => {
-    event.preventDefault();
-    //get the file from the input type file
-    const file = event.target.files[0];
+  const CaptureFile = (file) => {
     const reader = new window.FileReader();
-    // convert it to buffer
     reader.readAsArrayBuffer(file);
     reader.onloadend = () => {
-      setimageBuffer({
+      setImageBuffer({
         buffer: Buffer(reader.result),
         type: file.type,
         name: file.name,
       });
     };
   };
-  console.log("buffer", imageBuffer);
 
   const navigate = useNavigate();
 
