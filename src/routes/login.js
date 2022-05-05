@@ -9,7 +9,6 @@ const Login = () => {
     const navigate = useNavigate()
 
     const handleInputChange = e => setAddress(e.target.value)
-
    
     const handleConnectButton = async () => {
         try {

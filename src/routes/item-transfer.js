@@ -130,44 +130,46 @@ const ItemTransfer = () => {
       {error && <p>{error}</p>}
 
       {item && (
-        <main className='md:w-3/4 mx-auto p-5'>
+        <main className='p-4 sm:p-10'>
         <h1 className='text-2xl font-semibold my-10 text-center'>Item Transfer</h1>
 
-        <div className='flex flex-col gap-5 my-10 md:flex-row clear-both'>
-          <div className='w-full h-56 bg-gray-100 rounded shadow md:flex-none md:w-1/2'></div>
-          <div className='md:w-1/2'>
-            <h2 className='font-bold text-xl text-gray-700 mb-2'>{item.name}</h2>
-            <div className='w-20 h-20 bg-gray-100 rounded'></div>
+        <div className='w-100 p-10 my-10 mx-auto bg-white rounded'>
+          <div className='flex flex-col gap-5 my-10 md:flex-row clear-both'>
+            <div className='w-full h-56 bg-gray-100 rounded shadow md:flex-none md:w-1/2'></div>
+            <div className='md:w-1/2'>
+              <h2 className='font-bold text-xl text-gray-700 mb-2'>{item.name}</h2>
+              <div className='w-20 h-20 bg-gray-100 rounded'></div>
 
-            <div>
-              <p className='font-semibold text-gray-500 text-sm mt-5'>Owned by</p>
-              <p className='text-sm overflow-auto mt-1'>{item.guard.keys}</p>
-            </div>
+              <div>
+                <p className='font-semibold text-gray-500 text-sm mt-5'>Owned by</p>
+                <p className='text-sm overflow-auto mt-1'>{item.guard.keys}</p>
+              </div>
 
-            <div>
-              <p className='font-semibold text-gray-500 text-sm mt-5'>Description</p>
-              <p className='text-sm overflow-auto mt-1 ='>{item.description}</p>
+              <div>
+                <p className='font-semibold text-gray-500 text-sm mt-5'>Description</p>
+                <p className='text-sm overflow-auto mt-1 ='>{item.description}</p>
+              </div>
+              
             </div>
-            
           </div>
-        </div>
 
-        <div>
-            <label className="block font-semibold text-gray-500">Account Address</label>
-            <input name="receiver-address" className="w-full border p-2 rounded"
-              value={receiverAddress}
-              onChange={handleInputChange}/>
-        </div>
+          <div>
+              <label className="block font-semibold text-gray-500">Account Address</label>
+              <input name="receiver-address" className="w-full border p-2 rounded"
+                value={receiverAddress}
+                onChange={handleInputChange}/>
+          </div>
 
-        <div className="flex gap-5">
-            <div>
-                <button className='bg-blue-500 rounded shadow text-white font-semibold px-5 py-2 mt-5'
-                  onClick={handleTransfer}>Submit</button>
-            </div>
-            <div>
-                <button className='bg-gray-200 rounded shadow text-black font-semibold px-5 py-2 mt-5'
-                  onClick={() => navigate(`/items/${params.id}`)}>Cancel</button>
-            </div>
+          <div className="flex gap-5">
+              <div>
+                  <button className='bg-blue-500 rounded shadow text-white font-semibold px-5 py-2 mt-5'
+                    onClick={handleTransfer}>Submit</button>
+              </div>
+              <div>
+                  <button className='bg-gray-200 rounded shadow text-black font-semibold px-5 py-2 mt-5'
+                    onClick={() => navigate(`/items/${params.id}`)}>Cancel</button>
+              </div>
+          </div>
         </div>
       </main> 
       )}
