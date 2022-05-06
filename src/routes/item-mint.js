@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import PreviewDropzone from "./previewdropzone";
+import PreviewDropzone from "../components/Dropzone";
+import { ToastifyContainer, toastError, toastLoading, toastUpdate } from "../components/Toastify";
 
 import Pact from "pact-lang-api";
 import kadenaAPI from "../kadena-config";
@@ -13,13 +14,6 @@ import { create } from "ipfs-http-client";
 const ipfsClient = create("https://ipfs.infura.io:5001/api/v0");
 
 const ItemMint = () => {
-  // image buffer
-  const [imageBuffer, setImageBuffer] = useState({
-    buffer: "",
-    type: "",
-    name: "",
-  });
-
   const [result, setResult] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -29,9 +23,19 @@ const ItemMint = () => {
     description: "",
     attributes: "",
   });
+  const [imageBuffer, setImageBuffer] = useState({
+    buffer: "",
+    type: "",
+    name: "",
+  });
+  const navigate = useNavigate();
 
-  // Get file from user
-  const CaptureFile = (file) => {
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setInputList((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const captureFile = (file) => {
     const reader = new window.FileReader();
     reader.readAsArrayBuffer(file);
     reader.onloadend = () => {
@@ -43,29 +47,21 @@ const ItemMint = () => {
     };
   };
 
-  const navigate = useNavigate();
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setInputList((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleMintButton = async () => {
-
+  const uploadImageToIpfs = async() => {
     const ipfsBaseUrl = "https://ipfs.infura.io/ipfs/";
-    
-    // upload image to IPFS
     const addedImage = await ipfsClient.add(imageBuffer.buffer);
     const imageURI = ipfsBaseUrl + addedImage.path;
     console.log(imageURI);
+    return imageURI
+  }
 
+  const handleMintButton = async () => {
     try {
       const account = checkWallet();
       const date = getDate();
       const itemId = uuidv4();
       const activityId = uuidv4();
-      // const url = "https://some-fixed-ipfs-url.com";
-      const url = imageURI;
+      const url = "await uploadImageToIpfs()";
 
       const cmd = {
         pactCode: `(jbsi.product_identification.create-item "${itemId}" "${inputList.name}" "${url}" "${inputList.description}" "${date}" (read-keyset "user-keyset") "${activityId}")`,
@@ -85,31 +81,26 @@ const ItemMint = () => {
       const { requestKeys } = await signTransaction(cmd);
       setRequestKey(requestKeys[0]);
     } catch (error) {
-      console.log(error.message);
+      toastError(error.message);
     }
   };
 
   const handleListen = async (requestKey) => {
-    try {
-      setLoading(true);
-      setError(false);
-      setResult("");
+    const id = toastLoading(`Transaction ${requestKey} is being process on the blockchain.`)
 
+    try {
       const { result, gas } = await Pact.fetch.listen(
         { listen: requestKey },
         kadenaAPI.meta.localhost
       );
       if (result.status === "failure") {
-        setLoading(false);
-        return setError(result.error.message);
+        return toastUpdate(id, { render: result.error.message, type: "error", isLoading: false,})
       }
 
       console.log(result);
-      setResult(result);
-      setLoading(false);
+      toastUpdate(id, { render: result.data, type: "success", isLoading: false,})
     } catch (error) {
-      setLoading(false);
-      setError(error.message);
+      toastUpdate(id, { render: error.message, type: "error", isLoading: false,})
       console.log("im here");
     }
   };
@@ -128,7 +119,7 @@ const ItemMint = () => {
       <div className="text-center w-full">
         <h1 className="text-2xl font-bold">Mint your Item</h1>
         {/* <div className='w-36 h-36 bg-gray-500 rounded mx-auto my-10'></div> */}
-        <PreviewDropzone onCapture={CaptureFile} />
+        <PreviewDropzone onCapture={captureFile} />
         <div className="sm:w-1/2 mx-auto">
           <div className="flex flex-col mb-5 sm:flex-row sm:items-center">
             <label className="text-left font-semibold text-gray-500 sm:basis-1/4">
@@ -182,6 +173,8 @@ const ItemMint = () => {
           </button>
         </div>
       </div>
+
+      <ToastifyContainer className="md:w-1/2" />
     </main>
   );
 };

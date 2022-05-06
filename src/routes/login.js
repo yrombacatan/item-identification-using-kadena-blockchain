@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 
 import { connectWallet, fetchAccount } from "../wallet";
 
+import { ToastifyContainer, toastError } from "../components/Toastify";
+
 const Login = () => {
     const [address, setAddress] = useState('')
     const [error, setError] = useState('')
@@ -18,7 +20,7 @@ const Login = () => {
             localStorage.setItem("accountAddress", JSON.stringify(data.account))
             navigate("/items")
         } catch (error) {
-            console.log(error.message)
+           toastError(error.message)
         }
     }
    
@@ -35,6 +37,8 @@ const Login = () => {
                 <button className="px-5 py-2 bg-indigo-500 hover:bg-indigo-400 rounded shadow text-white mt-10"
                     onClick={handleConnectButton}>Connect</button>
            </div>
+
+           <ToastifyContainer />
        </main>
     )
 }

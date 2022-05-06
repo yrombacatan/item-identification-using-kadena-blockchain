@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 
+import { ToastifyContainer, toastError, toastLoading, toastUpdate } from "../components/Toastify";
+
 import Pact from "pact-lang-api"
 import kadenaAPI from "../kadena-config"
 import { checkWallet, signTransaction } from "../wallet"
@@ -10,8 +12,6 @@ import { v4 as uuidv4 } from 'uuid';
 
 const ItemTransfer = () => {
   const [item, setItem] = useState('')
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(false)
   const [receiverAddress, setReceiverAddress] = useState('')
   const [requestKey, setRequestkey] = useState('')
   const [result, setResult] = useState('')
@@ -37,20 +37,15 @@ const ItemTransfer = () => {
 
       if(result.status === 'failure') {
         setItem('')
-        setLoading(false)
-        return setError(result.error.message)
+        return toastError(result.error.message)
       }
 
       const item = {...result.data.body, keys: result.data.keys }
-
-      setLoading(false)
-      setError(false)
       setItem(item)
 
     } catch (error) {
       setItem('')
-      setLoading(false)
-      return setError(error.message)
+      return toastError(error.message)
     }
   }
 
@@ -80,29 +75,25 @@ const ItemTransfer = () => {
       setRequestkey(requestKeys[0])
 
     } catch (error) {
-      return setError(error.message)
+      return toastError(error.message)
     }
   }
 
   const handleListen = async (requestKey) => {
     try {
-      setLoading(true)
-      setError(false)
+      const id = toastLoading(`Transaction ${requestKey} is being process on the blockchain.`)
       setResult('')
 
       const { result, gas } = await Pact.fetch.listen({ listen: requestKey }, kadenaAPI.meta.localhost)
       if(result.status === 'failure') {
-        setLoading(false)
-        return setError(result.error.message)
+        return toastUpdate(id, { render: result.error.message, type: "error", isLoading: false,})
       }
 
       console.log(result)
       setResult(result)
-      setLoading(false)
+      toastUpdate(id, { render: result.data, type: "success", isLoading: false,})
     } catch (error) {
-      setLoading(false)
-      setError(error.message)
-      console.log('im here')
+      toastError(error.message)
     }
   }
 
@@ -126,9 +117,6 @@ const ItemTransfer = () => {
 
   return (
     <>
-      {loading && <p>Loading...</p>}
-      {error && <p>{error}</p>}
-
       {item && (
         <main className='p-4 sm:p-10'>
         <h1 className='text-2xl font-semibold my-10 text-center'>Item Transfer</h1>
@@ -171,6 +159,8 @@ const ItemTransfer = () => {
               </div>
           </div>
         </div>
+
+        <ToastifyContainer className="md:w-1/2" />
       </main> 
       )}
     </>

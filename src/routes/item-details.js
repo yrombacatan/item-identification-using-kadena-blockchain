@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 
+import { ToastifyContainer, toastError } from "../components/Toastify";
+
 import Pact from "pact-lang-api"
 import kadenaAPI from "../kadena-config"
 
@@ -28,8 +30,6 @@ const ActivityRow = ({ activityList }) => {
 const ItemDetails = () => {
   const [item, setItem] = useState('')
   const [activities, setActivities] = useState('')
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(false)
   const params = useParams()
   const navigate = useNavigate()
 
@@ -53,23 +53,19 @@ const ItemDetails = () => {
       if(result.status === 'failure') {
         setItem('')
         setActivities('')
-        setLoading(false)
-        return setError(result.error.message)
+        return toastError(result.error.message)
       }
 
       const item = {...result.data.body, keys: result.data.keys }
       const activityList = [...result.data.activities ]
 
-      setLoading(false)
-      setError(false)
       setItem(item)
       setActivities(activityList)
 
     } catch (error) {
       setItem('')
       setActivities('')
-      setLoading(false)
-      return setError(error.message)
+      toastError(error.message)
     }
   }
 
@@ -84,9 +80,6 @@ const ItemDetails = () => {
 
   return (
     <>
-      {loading && <p>Loading...</p>}
-      {error && <p>{error}</p>}
-
       {item && (
         <main className='p-4 sm:p-10'>
         <h1 className='text-2xl font-semibold my-10 text-center'>Item Details</h1>
@@ -145,6 +138,8 @@ const ItemDetails = () => {
             </div>
           </div>
         </div>
+
+        <ToastifyContainer />
       </main> 
       )}
     </>

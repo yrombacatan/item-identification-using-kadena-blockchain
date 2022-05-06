@@ -4,6 +4,8 @@ import { Link, useNavigate } from 'react-router-dom'
 import Pact from 'pact-lang-api'
 import kadenaAPI from '../kadena-config'
 
+import { ToastifyContainer, toastError } from '../components/Toastify'
+
 const ItemRow = ({ itemList }) => {
   return itemList.map((item, _i) => {
     return (
@@ -34,8 +36,6 @@ const TableMessage = ({ msg }) => {
 
 const ItemList = () => {
   const [items, setItems] = useState('')
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(false)
   const navigate = useNavigate()
 
   const fetchItems = async () => {
@@ -56,21 +56,17 @@ const ItemList = () => {
       const { result } = await Pact.fetch.local(cmd, kadenaAPI.meta.localhost)
       if(result.status === 'failure') {
         setItems('')
-        setLoading(false)
-        return setError(result.error.message)
+        return toastError(result.error.message)
       }
       
       const itemList = result.data.map(v => ({...v.body, keys: v.keys}))
       console.log(itemList)
 
-      setLoading(false)
-      setError(false)
       setItems(itemList)
 
     } catch (error) {
       setItems('')
-      setLoading(false)
-      return setError(error.message)
+      return toastError(error.message)
     }
     
   }
@@ -113,13 +109,12 @@ const ItemList = () => {
                   </tr>
               </thead>
               <tbody className="bg-white">
-                  {loading && <TableMessage msg="Loading"/>}
-                  {error && <TableMessage msg={error}/>}
                   {items.length > 0 ? <ItemRow itemList={items} /> : <TableMessage msg="No items found, Mint now!" />}
               </tbody>
           </table>
       </div>
 
+      <ToastifyContainer />
     </main>  
   )
 }
