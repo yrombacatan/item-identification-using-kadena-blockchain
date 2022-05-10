@@ -5,6 +5,8 @@ import { connectWallet, fetchAccount } from "../wallet";
 
 import { ToastifyContainer, toastError } from "../components/Toastify";
 
+import { removePrefixK } from "../utils";
+
 const Login = () => {
     const [address, setAddress] = useState('')
     const [error, setError] = useState('')
@@ -16,8 +18,8 @@ const Login = () => {
         try {
             const { data } = await fetchAccount(address)
             await connectWallet(data.account)
-    
-            localStorage.setItem("accountAddress", JSON.stringify(data.account))
+            const accountAddress = removePrefixK(data.account)
+            localStorage.setItem("accountAddress", accountAddress)
             navigate("/items")
         } catch (error) {
            toastError(error.message)

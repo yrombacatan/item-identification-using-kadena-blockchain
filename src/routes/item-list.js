@@ -89,7 +89,7 @@ const ItemList = () => {
           <p className='font-bold bg-indigo-500 text-white rounded-t'>User</p>
         </div>
 
-        <p className='font-bold text-gray-700 my-10 overflow-auto'>k:40629476d403abc78584e5aec835683eaf2ba46441a7a4a89fa30982e87d18ea</p>
+        <p className='font-bold text-gray-700 my-10 overflow-auto'>{`k:${localStorage.getItem('accountAddress')}`}</p>
       </div>
       
       <div className="bg-white mt-10 p-10 rounded">

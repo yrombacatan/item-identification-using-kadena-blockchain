@@ -1,6 +1,8 @@
 import Pact from 'pact-lang-api'
 import kadenaAPI from "./kadena-config";
 
+import { removePrefixK } from './utils';
+
 const connectWallet = async (account) => {
     const hasXwallet = window?.kadena?.isKadena === true
     if(account) {
@@ -64,7 +66,7 @@ const fetchAccount = async (address) => {
     const { result } = await Pact.fetch.local(cmd, kadenaAPI.meta.host)
 
     if(result.status === "failure") {
-        throw new Error(result.error.message) 
+        throw new Error(`Account address "${address}" does not exist on the blockchain!`) 
     }
     
     return result
@@ -73,13 +75,25 @@ const fetchAccount = async (address) => {
 
 const checkWallet = () => {
     if(localStorage.getItem('accountAddress')) {
-        return JSON.parse(localStorage.getItem('accountAddress'))
+        return localStorage.getItem('accountAddress')
     } 
 
     throw new Error("Account is required, please connect account address.")
 }
 
 const verifyAccount = async (account) => {
+    console.log('start verifying...')
+    await window.kadena.request({
+        method: "kda_disconnect",
+        networkId: kadenaAPI.meta.networkId,
+    });
+      
+    console.log('after disconnecting...')
+    await window.kadena.request({
+        method: "kda_connect",
+        networkId: kadenaAPI.meta.networkId,
+    });
+
     const accountConnectedRes = await window.kadena.request({
         method: "kda_requestAccount",
         networkId: kadenaAPI.meta.networkId,
@@ -88,12 +102,12 @@ const verifyAccount = async (account) => {
     
     if (accountConnectedRes?.status !== "success") {
         throw new Error("X Wallet connection was lost, please re-connect");
-    } else if (accountConnectedRes?.wallet?.account !== account) {
+    } else if (accountConnectedRes?.wallet?.account && removePrefixK(accountConnectedRes.wallet.account) !== account) {
         throw new Error(`Wrong X Wallet account selected in extension, please select ${account}`);
     } else if (accountConnectedRes?.wallet?.chainId != kadenaAPI.meta.chainId) {
         throw new Error(`Wrong chain selected in X Wallet, please select ${kadenaAPI.meta.chainId}`)
     }
-
+    
     return accountConnectedRes
 }
 
@@ -103,7 +117,9 @@ const signTransaction = async (cmdToSign) => {
     let signedCmd = ''
 
     if(hasXWallet) {
+        console.log('before verifiying...')
         await verifyAccount(account)
+        console.log('after verifiying...')
         const xwalletSignRes = await window.kadena.request({
             method: "kda_requestSign",
             networkId: kadenaAPI.meta.networkId,

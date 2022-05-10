@@ -86,8 +86,11 @@ const ItemDetails = () => {
 
         <div className='w-100 p-10 my-10 mx-auto bg-white rounded'>
           <div className='flex gap-5 sm:justify-end'>
-            <button onClick={() => navigate(`/items/${item.keys}/transfer`)} 
+            {item.guard.keys[0] === localStorage.getItem('accountAddress') ?
+              <button onClick={() => navigate(`/items/${item.keys}/transfer`)} 
               className='bg-blue-500 rounded shadow text-white font-semibold px-5 py-2'>Transfer</button>
+            : null
+            }
             <button onClick={() => navigate(`/items`)} 
             className='bg-gray-200 rounded shadow text-black font-semibold px-5 py-2'>Back</button>
           </div>

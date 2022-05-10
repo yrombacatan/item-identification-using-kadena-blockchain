@@ -5,7 +5,7 @@ import { ToastifyContainer, toastError, toastLoading, toastUpdate } from "../com
 
 import Pact from "pact-lang-api"
 import kadenaAPI from "../kadena-config"
-import { checkWallet, signTransaction } from "../wallet"
+import { checkWallet, signTransaction, fetchAccount } from "../wallet"
 import { getDate } from '../utils'
 
 import { v4 as uuidv4 } from 'uuid';
@@ -53,6 +53,7 @@ const ItemTransfer = () => {
 
   const handleTransfer = async () => {
     try {
+      await fetchAccount(receiverAddress)
       const account = checkWallet()
       const activityId = uuidv4()
       const date = getDate()

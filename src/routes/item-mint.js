@@ -145,18 +145,6 @@ const ItemMint = () => {
               onChange={handleInputChange}
             />
           </div>
-          <div className="flex flex-col mb-5 sm:flex-row sm:items-center">
-            <label className="text-left font-semibold text-gray-500 sm:basis-1/4">
-              Attributes
-            </label>
-            <input
-              type="text"
-              name="attributes"
-              className="flex-auto border p-2 rounded"
-              value={inputList.attributes}
-              onChange={handleInputChange}
-            />
-          </div>
         </div>
         <div className="flex justify-center gap-5">
           <button
