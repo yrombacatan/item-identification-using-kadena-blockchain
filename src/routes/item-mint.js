@@ -61,7 +61,7 @@ const ItemMint = () => {
       const date = getDate();
       const itemId = uuidv4();
       const activityId = uuidv4();
-      const url = "await uploadImageToIpfs()";
+      const url = await uploadImageToIpfs();
 
       const cmd = {
         pactCode: `(jbsi.product_identification.create-item "${itemId}" "${inputList.name}" "${url}" "${inputList.description}" "${date}" (read-keyset "user-keyset") "${activityId}")`,

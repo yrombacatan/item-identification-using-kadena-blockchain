@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 
 import { ToastifyContainer, toastError } from "../components/Toastify";
+import FeatherIcon from 'feather-icons-react';
+import { QRCodeSVG } from 'qrcode.react';
 
 import Pact from "pact-lang-api"
 import kadenaAPI from "../kadena-config"
@@ -27,9 +29,21 @@ const ActivityRow = ({ activityList }) => {
   })
 }
 
+const ImageViewContainer = ({url, show, setShowImage}) => {
+  const toggleClass = `${show ? 'top-0' : '-top-full'}`
+  return (
+    <div className={`w-full min-h-full absolute left-0 z-10 transition-all ${toggleClass}`}>
+      <div className='absolute w-full min-h-screen bg-black opacity-90' 
+        onClick={() => setShowImage(! show)}></div>
+      <img src={url} className="w-full md:w-1/2 bg-cover bg-fit absolute z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+    </div>
+  )
+}
+
 const ItemDetails = () => {
   const [item, setItem] = useState('')
   const [activities, setActivities] = useState('')
+  const [showImage, setShowImage] = useState(false)
   const params = useParams()
   const navigate = useNavigate()
 
@@ -96,10 +110,20 @@ const ItemDetails = () => {
           </div>
 
           <div className='flex flex-col gap-5 my-10 md:flex-row clear-both'>
-            <div className='w-full h-56 bg-gray-100 rounded shadow md:flex-none md:w-1/2'></div>
+            <div className='w-full md:flex-none md:w-1/2 relative'>
+              <img src={item.url} className="md:w-full max-h-96 bg-cover cursor-pointer" 
+                onClick={() => setShowImage(! showImage)}/>
+              <div className="absolute top-2 right-2 cursor-pointer bg-gray-800 p-2 rounded" 
+                onClick={() => window.open(item.url)}>
+                <FeatherIcon icon="external-link" className="text-white"/>
+              </div>
+              
+            </div>
             <div className='md:w-1/2'>
               <h2 className='font-bold text-xl text-gray-700 mb-2'>{item.name}</h2>
-              <div className='w-20 h-20 bg-gray-100 rounded'></div>
+              <div>
+                <QRCodeSVG value={window.location.href} size="100" />
+              </div>
 
               <div>
                 <p className='font-semibold text-gray-500 text-sm mt-5'>Owned by</p>
@@ -141,7 +165,11 @@ const ItemDetails = () => {
             </div>
           </div>
         </div>
-
+        
+        <ImageViewContainer 
+          url={item.url} 
+          show={showImage}
+          setShowImage={setShowImage}/>
         <ToastifyContainer />
       </main> 
       )}
