@@ -12,14 +12,13 @@ import kadenaAPI from "../kadena-config"
 import { checkWallet, signTransaction, fetchAccount } from "../wallet"
 import { getDate } from '../utils'
 
-
 const ImageViewContainer = ({url, show, setShowImage}) => {
   const toggleClass = `${show ? 'top-0' : '-top-full'}`
   return (
     <div className={`w-full min-h-full absolute left-0 z-10 transition-all ${toggleClass}`}>
       <div className='absolute w-full min-h-screen bg-black opacity-90' 
         onClick={() => setShowImage(! show)}></div>
-      <img src={url} className="w-full md:w-1/2 bg-cover bg-fit absolute z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+      <img src={url} className="w-full md:w-1/2 object-cover absolute z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
     </div>
   )
 }
@@ -36,7 +35,7 @@ const ItemTransfer = () => {
   const fetchItem = async (id) => {
     try {
       const cmd = {
-        pactCode: `(jbsi.product_identification.item-details "${id}")`,
+        pactCode: `(item_identification.item-details "${id}")`,
         meta: Pact.lang.mkMeta(
           kadenaAPI.meta.sender,
           kadenaAPI.meta.chainId,
@@ -73,7 +72,7 @@ const ItemTransfer = () => {
       const activityId = uuidv4()
       const date = getDate()
       const cmd = {
-        pactCode: `(jbsi.product_identification.transfer-item "${item.keys}" "${activityId}" "${date}" (read-keyset "receiver-keyset"))`,
+        pactCode: `(item_identification.transfer-item "${item.keys}" "${activityId}" "${date}" (read-keyset "receiver-keyset"))`,
         caps: [],
         envData: {
           "receiver-keyset": [receiverAddress],
@@ -134,23 +133,22 @@ const ItemTransfer = () => {
   return (
     <>
       {item && (
-        <main className='p-4 sm:p-10'>
-        <h1 className='text-2xl font-semibold my-10 text-center'>Item Transfer</h1>
-
-        <div className='w-100 p-10 my-10 mx-auto bg-white rounded'>
-          <div className='flex flex-col gap-5 my-10 md:flex-row clear-both'>
-            <div className='w-full md:flex-none md:w-1/2 relative'>
-              <img src={item.url} className="md:w-full max-h-96 bg-cover cursor-pointer" 
+        <main className='sm:w-4/5 mx-auto mt-10 h-100 p-5 sm:10 sm:p-10 shadow-md'>
+        <h1 className='text-2xl font-semibold text-center mb-20'>Item Transfer</h1>
+        <div className='w-100 my-10 mx-auto bg-white rounded mt-10'>
+          <div className='flex flex-col gap-10 my-10 md:flex-row clear-both'>
+            <div className='w-full md:flex-none md:w-2/5 relative'>
+              <img src={item.url} className="md:w-full max-h-96 object-cover cursor-pointer" 
                 onClick={() => setShowImage(! showImage)}/>
               <div className="absolute top-2 right-2 cursor-pointer bg-gray-800 p-2 rounded" 
                 onClick={() => window.open(item.url)}>
                 <FeatherIcon icon="external-link" className="text-white"/>
               </div>
             </div>
-            <div className='md:w-1/2'>
+            <div className='md:w-3/5'>
               <h2 className='font-bold text-xl text-gray-700 mb-2'>{item.name}</h2>
               <div>
-                <QRCodeSVG value={window.location.href} size="100" />
+                <QRCodeSVG value={window.location.href} size="150" />
               </div>
 
               <div>

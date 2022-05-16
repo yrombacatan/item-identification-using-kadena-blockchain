@@ -64,7 +64,7 @@ const ItemMint = () => {
       const url = await uploadImageToIpfs();
 
       const cmd = {
-        pactCode: `(jbsi.product_identification.create-item "${itemId}" "${inputList.name}" "${url}" "${inputList.description}" "${date}" (read-keyset "user-keyset") "${activityId}")`,
+        pactCode: `(item_identification.create-item "${itemId}" "${inputList.name}" "${url}" "${inputList.description}" "${date}" (read-keyset "user-keyset") "${activityId}")`,
         caps: [],
         envData: {
           "user-keyset": [account],
