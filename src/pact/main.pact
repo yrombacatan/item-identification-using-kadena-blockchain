@@ -1,16 +1,9 @@
-(define-keyset 'admin-keyset)
-(define-keyset 'user-keyset)
+(define-keyset 'jbsi-admin-keyset)
 
-(define-namespace 'jbsi
-    (keyset-ref-guard 'admin-keyset)
-    (keyset-ref-guard 'user-keyset))
-
-(namespace 'jbsi)
-
-(module product_identification GOVERNANCE
+(module item_identification GOVERNANCE
     ; capability
     (defcap GOVERNANCE()
-        (enforce-guard (read-keyset 'admin-keyset))
+        (enforce-guard (read-keyset 'jbsi-admin-keyset))
     )
     (defcap ALLOW_ENTRY(item_id)
        (enforce-guard (at 'guard (read tbl_items item_id))))
