@@ -116,49 +116,56 @@ const ItemMint = () => {
 
   return (
     <main className="flex justify-center min-h-screen items-center p-5">
-      <div className="text-center w-full">
-        <h1 className="text-2xl font-bold">Mint your Item</h1>
-        {/* <div className='w-36 h-36 bg-gray-500 rounded mx-auto my-10'></div> */}
-        <PreviewDropzone onCapture={captureFile} />
-        <div className="sm:w-1/2 mx-auto">
-          <div className="flex flex-col mb-5 sm:flex-row sm:items-center">
-            <label className="text-left font-semibold text-gray-500 sm:basis-1/4">
-              Name
-            </label>
-            <input
-              type="text"
-              name="name"
-              className="flex-auto border p-2 rounded"
-              value={inputList.name}
-              onChange={handleInputChange}
-            />
-          </div>
-          <div className="flex flex-col mb-5 sm:flex-row sm:items-center">
-            <label className="text-left font-semibold text-gray-500 sm:basis-1/4">
-              Description
-            </label>
-            <input
-              type="text"
-              name="description"
-              className="flex-auto border p-2 rounded"
-              value={inputList.description}
-              onChange={handleInputChange}
-            />
-          </div>
+      <div className="text-center w-4/5 bg-white rounded drop-shadow-md p-10">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold">Mint your Item</h1>
         </div>
-        <div className="flex justify-center gap-5">
-          <button
-            className="py-2 px-5 bg-blue-500 rounded shadow font-medium text-white"
-            onClick={handleMintButton}
-          >
-            Submit
-          </button>
-          <button
-            className="py-2 px-5 bg-gray-200 rounded shadow font-medium text-black"
-            onClick={() => navigate("/items")}
-          >
-            Cancel
-          </button>
+        <div className="flex flex-col sm:grid grid-cols-2 ">
+          <div className="flex w-100 justify-center">
+            {/* <div className='w-36 h-36 bg-gray-500 rounded mx-auto my-10'></div> */}
+            <PreviewDropzone onCapture={captureFile} />
+          </div>
+
+          <div className="w-100 sm:w-4/5">
+            <div className="flex flex-col items-left mt-5 mb-5">
+              <label className="text-left font-semibold text-gray-500 sm:basis-1/4">
+                Name
+              </label>
+              <input
+                type="text"
+                name="name"
+                className="flex-auto border p-2 rounded"
+                value={inputList.name}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="flex flex-col items-left mb-5">
+              <label className="text-left font-semibold text-gray-500 sm:basis-1/4">
+                Description
+              </label>
+              <input
+                type="text"
+                name="description"
+                className="flex-auto border p-2 rounded"
+                value={inputList.description}
+                onChange={handleInputChange}
+              />
+            </div>
+          <div className="flex justify-center gap-5">
+            <button
+              className="py-2 px-5 bg-blue-500 rounded shadow font-medium text-white"
+              onClick={handleMintButton}
+            >
+              Submit
+            </button>
+            <button
+              className="py-2 px-5 bg-gray-200 rounded shadow font-medium text-black"
+              onClick={() => navigate("/items")}
+            >
+              Cancel
+            </button>
+          </div>
+          </div>
         </div>
       </div>
 
