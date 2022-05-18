@@ -1,40 +1,40 @@
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const props = {
-    position: "top-right",
-    autoClose: 5000,
-    hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: false,
-    progress: undefined,
-}
+  position: "top-right",
+  autoClose: 5000,
+  hideProgressBar: false,
+  closeOnClick: true,
+  pauseOnHover: true,
+  draggable: false,
+  progress: undefined,
+};
 
 const toastError = (msg) => {
-    toast.error(msg, props);
-}
+  toast.error(msg, props);
+};
 
 const toastSuccess = (msg) => {
-    toast.success(msg, props)
-}
+  toast.success(msg, props);
+};
 
 const toastLoading = (msg) => {
-    return toast.loading(msg, props)
-}
+  return toast.loading(msg, { ...props, closeOnClick: false });
+};
 
 const toastUpdate = (id, otherProps) => {
-    toast.update(id, {...otherProps, ...props})
-}
+  toast.update(id, { ...otherProps, ...props });
+};
 
 const ToastifyContainer = (props) => {
-    return <ToastContainer {...props}/>
-}
+  return <ToastContainer {...props} />;
+};
 
-export { 
-    ToastifyContainer, 
-    toastError,
-    toastSuccess,
-    toastLoading,
-    toastUpdate,
-} 
+export {
+  ToastifyContainer,
+  toastError,
+  toastSuccess,
+  toastLoading,
+  toastUpdate,
+};
