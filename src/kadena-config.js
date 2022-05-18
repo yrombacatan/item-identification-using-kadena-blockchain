@@ -26,7 +26,7 @@ const networkId = "testnet04";
 //var networkId = "mainnet01";
 
 //network node
-const node = "api.testnet.chainweb.com"
+const node = "api.testnet.chainweb.com";
 //var node = "us-e1.chainweb.com";
 
 //unique contract name
@@ -64,15 +64,15 @@ var kadenaAPI = {
     //gas price at lowest possible denomination
     gasPrice: 0.00000001,
     //high gas limit for tx
-    gasLimit: 30000,
+    gasLimit: 80000,
     //time a tx lives in mempool since creationTime
     ttl: 28800,
     //sender === gas payer of the transaction
     //  set to our gas station account defined in memory-wall-gas-station.pact
-    sender: "",
+    sender: "item-id-free-gas",
     //nonce here doesnt matter since the tx will never have the same hash
     nonce: "some nonce that doesnt matter",
   },
 };
 
-export default kadenaAPI
+export default kadenaAPI;
