@@ -1,4 +1,4 @@
-codeFile: main.pact
+codeFile: main-v2.pact
 data:
   jbsi-admin-keyset: ["1853c995c7d69283f3eecadfb32e3f69da7f615bcffbe342d2c0fd9e5949d4f6"]
   user-keyset: ["f7f4a6f7848bd8a955b0a84f4da5d6c9000104c8c0cae4f5e31cb708efdbeaa0"]
