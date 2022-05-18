@@ -231,12 +231,13 @@ const Table = ({ columns, data }) => {
                                 onClick={() => row.original.link ? navigate(row.original.link) : ''}>
 
                                 {row.cells.map(cell => {
+                                    const value = cell.value.length > 50 ? `${cell.value.slice(0, 50)}...` : cell.value
                                 return (
                                     <td
                                     {...cell.getCellProps()}
                                     className="px-6 py-4 whitespace-nowrap"
                                     >
-                                    {cell.render('Cell')}
+                                    {value}
                                     </td>
                                 )
                                 })}
