@@ -16,29 +16,27 @@ const PreviewDropzone = (props) => {
         )
       );
 
-      props.onCapture(acceptedFiles[0])
+      props.onCapture(acceptedFiles[0]);
     },
   });
 
   const thumbs = files.map((file) => (
     <div key={file.name}>
-      <div>
-        <img
-          src={file.preview}
-          // Revoke data uri after image is loaded
-          onLoad={() => {
-            URL.revokeObjectURL(file.preview);
-          }}
-          alt="img"
-          className="preview"
-        />
-      </div>
+      <img
+        src={file.preview}
+        // Revoke data uri after image is loaded
+        onLoad={() => {
+          URL.revokeObjectURL(file.preview);
+        }}
+        alt="img"
+        className="preview rounded"
+      />
     </div>
   ));
 
   const clearImageHandler = () => {
     setFiles([]);
-  }
+  };
 
   useEffect(() => {
     // Make sure to revoke the data uris to avoid memory leaks, will run on unmount
@@ -46,22 +44,22 @@ const PreviewDropzone = (props) => {
   }, []);
 
   return (
-    <section className="dropzoneContainer">
+    <section className="dropzoneContainer shadow py-5 px-2">
       <aside>{thumbs}</aside>
       {files.length === 0 && (
         <div {...getRootProps({ className: "dropzone" })}>
-          <input
-            {...getInputProps()}
-            name="itemImage"
-          />
+          <input {...getInputProps()} name="itemImage" />
           <p>Drop Image here</p>
         </div>
       )}
-      { files.length !== 0 && <button
-        className="py-1 px-5 mt-5 bg-gray-200 rounded shadow font-medium text-black" onClick={clearImageHandler}
-      >
-        Clear image
-      </button>}
+      {files.length !== 0 && (
+        <button
+          className="py-1 px-5 mt-5 bg-gray-200 rounded shadow font-medium text-black"
+          onClick={clearImageHandler}
+        >
+          Clear image
+        </button>
+      )}
     </section>
   );
 };
