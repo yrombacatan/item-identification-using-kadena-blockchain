@@ -115,13 +115,13 @@ const ItemList = () => {
           style={{ height: "fit-content", width: "fit-content" }}
         >
           <Identicon
-            string={`k:${localStorage.getItem("accountAddress")}`}
+            string={localStorage.getItem("accountAddress")}
             size="150"
           />
         </div>
-        <p className="font-bold text-gray-700 overflow-auto">{`k:${localStorage.getItem(
-          "accountAddress"
-        )}`}</p>
+        <p className="font-bold text-gray-700 overflow-auto">
+          {localStorage.getItem("accountAddress")}
+        </p>
       </div>
 
       <div className="bg-white rounded">

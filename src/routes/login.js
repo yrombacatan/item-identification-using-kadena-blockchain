@@ -18,8 +18,7 @@ const Login = () => {
     try {
       const { data } = await fetchAccount(address);
       await connectWallet(data.account);
-      const accountAddress = removePrefixK(data.account);
-      localStorage.setItem("accountAddress", accountAddress);
+      localStorage.setItem("accountAddress", data.account);
       navigate("/items");
     } catch (error) {
       toastError(error.message);

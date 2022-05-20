@@ -108,11 +108,13 @@ const verifyAccount = async (account) => {
     domain: window.location.hostname,
   });
 
+  console.log(accountConnectedRes);
+
   if (accountConnectedRes?.status !== "success") {
     throw new Error("X Wallet connection was lost, please re-connect");
   } else if (
     accountConnectedRes?.wallet?.account &&
-    removePrefixK(accountConnectedRes.wallet.account) !== account
+    accountConnectedRes.wallet.account !== account
   ) {
     throw new Error(
       `Wrong X Wallet account selected in extension, please select ${account}`
@@ -166,7 +168,7 @@ const signTransaction = async (cmdToSign) => {
   console.log(parseLocalRes);
 
   if (parseLocalRes?.result?.status !== "success") {
-    console.log('not working in local')
+    console.log("not working in local");
     throw new Error(parseLocalRes?.result?.error?.message);
   }
 

@@ -5,6 +5,8 @@ import { ToastifyContainer, toastError } from "../components/Toastify";
 import FeatherIcon from "feather-icons-react";
 import { QRCodeSVG } from "qrcode.react";
 
+import { removePrefixK } from "../utils";
+
 import Pact from "pact-lang-api";
 import kadenaAPI from "../kadena-config";
 
@@ -70,7 +72,7 @@ const ItemDetails = () => {
       };
 
       const { result } = await Pact.fetch.local(cmd, kadenaAPI.meta.host);
-
+      console.log(result);
       if (result.status === "failure") {
         setItem("");
         setActivities("");
@@ -107,7 +109,8 @@ const ItemDetails = () => {
 
           <div className="w-100 mx-auto bg-white rounded mb-10">
             <div className="flex gap-5 justify-end">
-              {item.guard.keys[0] === localStorage.getItem("accountAddress") ? (
+              {item.guard.keys[0] ===
+              removePrefixK(localStorage.getItem("accountAddress")) ? (
                 <button
                   onClick={() => navigate(`/items/${item.keys}/transfer`)}
                   className="bg-blue-500 rounded shadow text-white font-semibold px-5 py-2"

@@ -11,7 +11,7 @@ import {
 import Pact from "pact-lang-api";
 import kadenaAPI from "../kadena-config";
 import { checkWallet, signTransaction } from "../wallet";
-import { getDate } from "../utils";
+import { getDate, removePrefixK } from "../utils";
 
 import { v4 as uuidv4 } from "uuid";
 
@@ -76,21 +76,18 @@ const ItemMint = () => {
         ["hi", { int: 1 }, 1.0]
       );
 
+      // prettier-ignore
       const cmd = {
-        pactCode: `(free.item_identification.create-item "${itemId}" "${
-          inputList.name
-        }" "${url}" "${inputList.description}" "${date}" ${JSON.stringify(
-          activity
-        )} (read-keyset "user-keyset"))`,
+        pactCode: `(free.item_identification.create-item "${itemId}" "${inputList.name}" "${url}" "${inputList.description}" "${date}" ${JSON.stringify(activity)} (read-keyset "user-keyset"))`,
         caps: [caps],
         envData: {
-          "user-keyset": [account],
+          "user-keyset": [removePrefixK(account)],
         },
         sender: kadenaAPI.meta.sender,
         chainId: kadenaAPI.meta.chainId,
         gasLimit: kadenaAPI.meta.gasLimit,
         gasPrice: kadenaAPI.meta.gasPrice,
-        signingPubKey: account, // account with no prefix k here
+        signingPubKey: removePrefixK(account), // account with no prefix k here
         ttl: kadenaAPI.meta.ttl,
         networkId: kadenaAPI.meta.networkId,
       };

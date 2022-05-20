@@ -11,7 +11,6 @@ import FeatherIcon from "feather-icons-react";
 import { QRCodeSVG } from "qrcode.react";
 
 import Pact from "pact-lang-api";
-import { v4 as uuidv4 } from "uuid";
 
 import kadenaAPI from "../kadena-config";
 import { checkWallet, signTransaction, fetchAccount } from "../wallet";
@@ -67,7 +66,7 @@ const ItemTransfer = () => {
       }
 
       const item = { ...result.data.body, keys: result.data.keys };
-      console.log(result)
+      console.log(result);
       setItem(item);
     } catch (error) {
       setItem("");
@@ -86,7 +85,7 @@ const ItemTransfer = () => {
         ...item.activities,
         {
           from: account,
-          to: removePrefixK(receiverAddress),
+          to: receiverAddress,
           date: date,
           event: "transfer",
         },
@@ -98,6 +97,7 @@ const ItemTransfer = () => {
       //   ["hi", { int: 1 }, 1.0]
       // );
 
+      // prettier-ignore
       const cmd = {
         pactCode: `(free.item_identification.transfer-item "${item.keys}" "${date}" ${JSON.stringify(activityList)} (read-keyset "receiver-keyset"))`,
         caps: [],
@@ -108,12 +108,12 @@ const ItemTransfer = () => {
         chainId: kadenaAPI.meta.chainId,
         gasLimit: kadenaAPI.meta.gasLimit,
         gasPrice: kadenaAPI.meta.gasPrice,
-        signingPubKey: account, // account with no prefix k here
+        signingPubKey: removePrefixK(account), // account with no prefix k here
         ttl: kadenaAPI.meta.ttl,
         networkId: kadenaAPI.meta.networkId,
       };
 
-      console.log(cmd)
+      console.log(cmd);
       const { requestKeys } = await signTransaction(cmd);
       setRequestkey(requestKeys[0]);
     } catch (error) {
