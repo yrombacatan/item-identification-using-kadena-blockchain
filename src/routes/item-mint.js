@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import PreviewDropzone from "../components/Dropzone";
-import { ToastifyContainer, toastError, toastLoading, toastUpdate } from "../components/Toastify";
+import {
+  ToastifyContainer,
+  toastError,
+  toastLoading,
+  toastUpdate,
+} from "../components/Toastify";
 
 import Pact from "pact-lang-api";
 import kadenaAPI from "../kadena-config";
@@ -47,34 +52,46 @@ const ItemMint = () => {
     };
   };
 
-  const uploadImageToIpfs = async() => {
+  const uploadImageToIpfs = async () => {
     const ipfsBaseUrl = "https://ipfs.infura.io/ipfs/";
     const addedImage = await ipfsClient.add(imageBuffer.buffer);
     const imageURI = ipfsBaseUrl + addedImage.path;
     console.log(imageURI);
-    return imageURI
-  }
+    return imageURI;
+  };
 
   const handleMintButton = async () => {
     try {
       const account = checkWallet();
       const date = getDate();
       const itemId = uuidv4();
-      const activityId = uuidv4();
       const url = await uploadImageToIpfs();
+      const activity = [
+        { from: account, to: "", date: date, event: "creation" },
+      ];
+      const caps = Pact.lang.mkCap(
+        "Gas Payer",
+        "Payer",
+        "free.item-identification-gas-station.GAS_PAYER",
+        ["hi", { int: 1 }, 1.0]
+      );
 
       const cmd = {
-        pactCode: `(item_identification.create-item "${itemId}" "${inputList.name}" "${url}" "${inputList.description}" "${date}" (read-keyset "user-keyset") "${activityId}")`,
-        caps: [],
+        pactCode: `(free.item_identification.create-item "${itemId}" "${
+          inputList.name
+        }" "${url}" "${inputList.description}" "${date}" ${JSON.stringify(
+          activity
+        )} (read-keyset "user-keyset"))`,
+        caps: [caps],
         envData: {
           "user-keyset": [account],
         },
-        sender: `k:${account}`,
+        sender: kadenaAPI.meta.sender,
         chainId: kadenaAPI.meta.chainId,
         gasLimit: kadenaAPI.meta.gasLimit,
         gasPrice: kadenaAPI.meta.gasPrice,
         signingPubKey: account, // account with no prefix k here
-        ttl: kadenaAPI.meta.creationTime(),
+        ttl: kadenaAPI.meta.ttl,
         networkId: kadenaAPI.meta.networkId,
       };
 
@@ -86,21 +103,35 @@ const ItemMint = () => {
   };
 
   const handleListen = async (requestKey) => {
-    const id = toastLoading(`Transaction ${requestKey} is being process on the blockchain.`)
+    const id = toastLoading(
+      `Transaction ${requestKey} is being process on the blockchain.`
+    );
 
     try {
       const { result, gas } = await Pact.fetch.listen(
         { listen: requestKey },
-        kadenaAPI.meta.localhost
+        kadenaAPI.meta.host
       );
       if (result.status === "failure") {
-        return toastUpdate(id, { render: result.error.message, type: "error", isLoading: false,})
+        return toastUpdate(id, {
+          render: result.error.message,
+          type: "error",
+          isLoading: false,
+        });
       }
 
       console.log(result);
-      toastUpdate(id, { render: result.data, type: "success", isLoading: false,})
+      toastUpdate(id, {
+        render: result.data,
+        type: "success",
+        isLoading: false,
+      });
     } catch (error) {
-      toastUpdate(id, { render: error.message, type: "error", isLoading: false,})
+      toastUpdate(id, {
+        render: error.message,
+        type: "error",
+        isLoading: false,
+      });
       console.log("im here");
     }
   };
@@ -115,56 +146,53 @@ const ItemMint = () => {
   }, [requestKey]);
 
   return (
-    <main className="flex justify-center min-h-screen items-center p-5">
-      <div className="text-center w-4/5 bg-white rounded drop-shadow-md p-10">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold">Mint your Item</h1>
-        </div>
-        <div className="flex flex-col sm:grid grid-cols-2 ">
-          <div className="flex w-100 justify-center">
-            {/* <div className='w-36 h-36 bg-gray-500 rounded mx-auto my-10'></div> */}
+    <main className="sm:w-4/5 mx-auto flex justify-center mt-10 h-100 p-5 sm:10 sm:p-10 shadow">
+      <div className="text-center w-full">
+        <h1 className="text-2xl font-bold">Mint your Item</h1>
+        <div className="sm:w-3/4 sm:mx-auto sm:flex">
+          <div className="sm:w-2/5">
             <PreviewDropzone onCapture={captureFile} />
           </div>
-
-          <div className="w-100 sm:w-4/5">
-            <div className="flex flex-col items-left mt-5 mb-5">
-              <label className="text-left font-semibold text-gray-500 sm:basis-1/4">
+          <div className="sm:w-3/5 sm:p-5">
+            <div className="flex flex-col mb-5">
+              <label className="text-left text-gray-500 sm:basis-1/4">
                 Name
               </label>
               <input
                 type="text"
                 name="name"
-                className="flex-auto border p-2 rounded"
+                className="flex-auto border-gray-300 p-2 rounded focus:border-blue-100"
                 value={inputList.name}
                 onChange={handleInputChange}
               />
             </div>
-            <div className="flex flex-col items-left mb-5">
-              <label className="text-left font-semibold text-gray-500 sm:basis-1/4">
+            <div className="flex flex-col mb-5">
+              <label className="text-left text-gray-500 sm:basis-1/4">
                 Description
               </label>
-              <input
+              <textarea
                 type="text"
                 name="description"
-                className="flex-auto border p-2 rounded"
+                className="flex-auto border-gray-300 p-2 rounded focus:border-blue-100"
                 value={inputList.description}
                 onChange={handleInputChange}
               />
             </div>
-          <div className="flex justify-center gap-5">
-            <button
-              className="py-2 px-5 bg-blue-500 rounded shadow font-medium text-white"
-              onClick={handleMintButton}
-            >
-              Submit
-            </button>
-            <button
-              className="py-2 px-5 bg-gray-200 rounded shadow font-medium text-black"
-              onClick={() => navigate("/items")}
-            >
-              Cancel
-            </button>
-          </div>
+
+            <div className="flex gap-5">
+              <button
+                className="py-2 px-5 bg-blue-500 rounded shadow font-medium text-white"
+                onClick={handleMintButton}
+              >
+                Submit
+              </button>
+              <button
+                className="py-2 px-5 bg-gray-200 rounded shadow font-medium text-black"
+                onClick={() => navigate("/items")}
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       </div>
