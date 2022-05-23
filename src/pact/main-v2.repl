@@ -17,11 +17,13 @@
 ;  (create-table tbl_activities)
 
 (welcome-message)
+
 (create-item "item123" "Kitties" "https://file.com" "Some Des" "10/10/22" [{"from": "oxx", "to": "oxx", "date": "10/1", "event": "creation"}] (read-keyset "bob-keyset"))
 ;  (create-item "item124" "Doggies" "https://file.com" "Some Des" "10/10/22" (read-keyset "user-keyset") 'act2)
 (item-all)
 
-(transfer-item 'item123 "10/10/22" [{"from": "oxx", "to": "oxx", "date": "10/1", "event": "creation"}, {"from": "oxx", "to": "oxx2", "date": "10/1", "event": "creation"}] (read-keyset 'anna-keyset))
+(test-capability (ALLOW_ENTRY 'item123))
+(transfer-item 'item123 [{"from": "oxx", "to": "oxx", "date": "10/1", "event": "creation"}, {"from": "oxx", "to": "oxx2", "date": "10/1", "event": "creation"}] (read-keyset 'anna-keyset))
 (item-all)
 ;  ;(item-activity 'item123)
 ;    (item-details "item123")
