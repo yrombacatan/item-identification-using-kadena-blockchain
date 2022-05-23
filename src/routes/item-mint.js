@@ -69,17 +69,25 @@ const ItemMint = () => {
       const activity = [
         { from: account, to: "", date: date, event: "creation" },
       ];
-      const caps = Pact.lang.mkCap(
+
+      const cap1 = Pact.lang.mkCap(
         "Gas Payer",
         "Payer",
         "free.item-identification-gas-station.GAS_PAYER",
         ["hi", { int: 1 }, 1.0]
       );
 
+      const cap2 = Pact.lang.mkCap(
+        "Allow Guard",
+        "Some guard",
+        "free.item_identification.ALLOW_GUARD",
+        [{ keys: [removePrefixK(account)], pred: "keys-all" }]
+      );
+
       // prettier-ignore
       const cmd = {
         pactCode: `(free.item_identification.create-item "${itemId}" "${inputList.name}" "${url}" "${inputList.description}" "${date}" ${JSON.stringify(activity)} (read-keyset "user-keyset"))`,
-        caps: [caps],
+        caps: [cap1, cap2],
         envData: {
           "user-keyset": [removePrefixK(account)],
         },
