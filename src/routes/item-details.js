@@ -35,7 +35,7 @@ const ImageViewContainer = ({ url, show, setShowImage }) => {
   const toggleClass = `${show ? "top-0" : "-top-full"}`;
   return (
     <div
-      className={`w-full min-h-full absolute left-0 z-10 transition-all ${toggleClass}`}
+      className={`w-full min-h-full absolute left-0 z-10 transition-all overflow-hidden ${toggleClass}`}
     >
       <div
         className="absolute w-full min-h-screen bg-black opacity-90"
@@ -130,7 +130,7 @@ const ItemDetails = () => {
               <div className="w-full md:flex-none md:w-2/5 relative">
                 <img
                   src={item.url}
-                  className="md:w-full max-h-96 object-cover cursor-pointer rounded shadow-md"
+                  className="md:w-full max-h-96 object-cover bg-no-repeat cursor-pointer rounded shadow-md overflow-hidden"
                   onClick={() => setShowImage(!showImage)}
                 />
                 <div
