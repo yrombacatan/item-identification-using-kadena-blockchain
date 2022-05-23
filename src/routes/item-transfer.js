@@ -20,7 +20,7 @@ const ImageViewContainer = ({ url, show, setShowImage }) => {
   const toggleClass = `${show ? "top-0" : "-top-full"}`;
   return (
     <div
-      className={`w-full min-h-full absolute left-0 z-10 transition-all ${toggleClass}`}
+      className={`w-full min-h-full absolute left-0 z-10 transition-all overflow-hidden ${toggleClass}`}
     >
       <div
         className="absolute w-full min-h-screen bg-black opacity-90"
@@ -90,21 +90,29 @@ const ItemTransfer = () => {
           event: "transfer",
         },
       ];
-      // const caps = Pact.lang.mkCap(
-      //   "Gas Payer",
-      //   "Payer",
-      //   "free.item-identification-gas-station.GAS_PAYER",
-      //   ["hi", { int: 1 }, 1.0]
-      // );
+
+      const cap1 = Pact.lang.mkCap(
+        "Gas Payer",
+        "Payer",
+        "free.item-identification-gas-station.GAS_PAYER",
+        ["hi", { int: 1 }, 1.0]
+      );
+
+      const cap2 = Pact.lang.mkCap(
+        "Allow Entry",
+        "Some guard",
+        "free.item_identification.ALLOW_ENTRY",
+        [`${item.keys}`]
+      );
 
       // prettier-ignore
       const cmd = {
-        pactCode: `(free.item_identification.transfer-item "${item.keys}" "${date}" ${JSON.stringify(activityList)} (read-keyset "receiver-keyset"))`,
-        caps: [],
+        pactCode: `(free.item_identification.transfer-item "${item.keys}" ${JSON.stringify(activityList)} (read-keyset "receiver-keyset"))`,
+        caps: [cap1, cap2],
         envData: {
           "receiver-keyset": [removePrefixK(receiverAddress)],
         },
-        sender: account,
+        sender: kadenaAPI.meta.sender,
         chainId: kadenaAPI.meta.chainId,
         gasLimit: kadenaAPI.meta.gasLimit,
         gasPrice: kadenaAPI.meta.gasPrice,
