@@ -5,7 +5,15 @@
     (defcap GOVERNANCE()
         (enforce-guard (read-keyset 'jbsi-admin-keyset))
     )
- 
+
+    (defcap ALLOW_ENTRY(item_id)
+        (enforce-guard (at "guard" (read tbl_itemsv2 item_id)))
+    )
+
+    (defcap ALLOW_GUARD(guard)
+        (enforce-guard guard)
+    )
+
     ; define table schema
     (defschema items
         name: string
@@ -50,16 +58,18 @@
         (enforce (!= name "") "Item name id is required")
         (enforce (!= url "") "Url is required")
 
-        (insert tbl_itemsv2 item_id {
-            'name: name,
-            'url: url,
-            'description: description,
-            'date: date,
-            'activities: activities,
-            'guard: guard
-        })
+        (with-capability (ALLOW_GUARD guard)
+            (tbl-itemsv2-insert 
+                item_id 
+                name
+                url
+                description
+                date
+                activities
+                guard)
 
-        (format "Item {} created, Guard: {}" [item_id, guard])
+            (format "Item {} created, Guard: {}" [item_id, guard])
+        )
     )
 
     (defun item-details:object(item_id)
@@ -72,24 +82,56 @@
 
     (defun transfer-item:object(
             item_id:string
-            date:string
             activities:list
             receiver:guard
         )
 
         (enforce (!= item_id "") "Item id is required")
         (enforce (!= (length activities) 0) "Activities is required")
+        
         ; owner only
-        (with-read tbl_itemsv2 item_id {
-            "guard":= sender
-            }
+        (with-capability (ALLOW_ENTRY item_id)
+            (with-read tbl_itemsv2 item_id {
+                "guard":= sender
+                }
+                
+                (tbl-itemsv2-update item_id activities receiver)
 
-            (enforce-guard sender)
-
-            (update tbl_itemsv2 item_id {"guard": receiver, "activities": activities})
-
-            (format "Item {} was successfully transferred from {} to {}" [item_id, sender, receiver])
+                (format "Item {} was successfully transferred from {} to {}" [item_id, sender, receiver])
+            )
         )
+    )
+
+    (defun tbl-itemsv2-insert (
+        item_id:string
+        name:string
+        url:string
+        description:string
+        date:string
+        activities:list
+        guard:guard
+        )
+
+        (require-capability (ALLOW_GUARD guard))
+
+        (insert tbl_itemsv2 item_id {
+            'name: name,
+            'url: url,
+            'description: description,
+            'date: date,
+            'activities: activities,
+            'guard: guard
+        })
+    )
+
+    (defun tbl-itemsv2-update (
+        item_id:string
+        activities:list
+        receiver:guard
+        )
+
+        (require-capability (ALLOW_ENTRY item_id))
+        (update tbl_itemsv2 item_id {"guard": receiver, "activities": activities})
     )
     
 )
