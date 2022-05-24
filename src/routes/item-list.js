@@ -90,7 +90,7 @@ const ItemList = () => {
   }, []);
 
   return (
-    <main className="sm:w-4/5 mx-auto mt-10 h-100 text-center p-5 sm:10 sm:p-10 shadow">
+    <main className="sm:w-4/5 mx-auto mt-10 h-100 p-5 sm:10 sm:p-10 shadow">
       <h1 className="text-2xl font-semibold text-center mb-10">Dashboard</h1>
 
       <div className="w-100 mx-auto bg-white rounded mb-10">
@@ -119,7 +119,7 @@ const ItemList = () => {
             size="150"
           />
         </div>
-        <p className="font-bold text-gray-700 overflow-auto">
+        <p className="font-bold text-gray-700 overflow-auto text-center">
           {localStorage.getItem("accountAddress")}
         </p>
       </div>

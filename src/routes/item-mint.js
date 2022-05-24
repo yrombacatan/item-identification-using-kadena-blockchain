@@ -151,14 +151,14 @@ const ItemMint = () => {
   }, [requestKey]);
 
   return (
-    <main className="sm:w-4/5 mx-auto flex justify-center mt-10 h-100 p-5 sm:10 sm:p-10 shadow">
-      <div className="text-center w-full">
-        <h1 className="text-2xl font-bold">Mint your Item</h1>
-        <div className="sm:w-3/4 sm:mx-auto sm:flex">
-          <div className="sm:w-2/5">
+    <main className="flex justify-center items-center p-5">
+      <div className="sm:w-1/2 -translate-y-10 text-center w-full p-5 md:p-10 shadow rounded">
+        <h1 className="text-2xl font-bold">Create your Item</h1>
+        <div className="md:flex gap-10">
+          <div className="md:w-2/5">
             <PreviewDropzone onCapture={captureFile} />
           </div>
-          <div className="sm:w-3/5 sm:p-5">
+          <div className="md:w-3/5 mt-5">
             <div className="flex flex-col mb-5">
               <label className="text-left text-gray-500 sm:basis-1/4">
                 Name
@@ -184,12 +184,12 @@ const ItemMint = () => {
               />
             </div>
 
-            <div className="flex gap-5">
+            <div className="flex gap-5 flex-col md:flex-row">
               <button
                 className="py-2 px-5 bg-blue-500 rounded shadow font-medium text-white"
                 onClick={handleMintButton}
               >
-                Submit
+                Mint
               </button>
               <button
                 className="py-2 px-5 bg-gray-200 rounded shadow font-medium text-black"
