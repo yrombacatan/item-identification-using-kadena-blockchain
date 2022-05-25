@@ -13,20 +13,16 @@
 ;(load "./namespace.pact")
 (load "./main-v2.pact")
 
-;  (create-table tbl_items)
-;  (create-table tbl_activities)
-
 (welcome-message)
 
-(create-item "item123" "Kitties" "https://file.com" "Some Des" "10/10/22" [{"from": "oxx", "to": "oxx", "date": "10/1", "event": "creation"}] (read-keyset "bob-keyset"))
-;  (create-item "item124" "Doggies" "https://file.com" "Some Des" "10/10/22" (read-keyset "user-keyset") 'act2)
-(item-all)
+(item_identification.create-item "1" "Css" "test.url" "some-des" "2" {"from": "bob", "to": "", "event": "creation"} (read-keyset 'bob-keyset))
+(item_identification.create-item "2" "Js" "test.url" "some-des" "2" {"from": "bob", "to": "", "event": "creation"} (read-keyset 'bob-keyset))
+(item_identification.create-item "3" "Kitties" "test.url" "some-des" "2" {"from": "anna", "to": "", "event": "creation"} (read-keyset 'anna-keyset))
 
-(test-capability (ALLOW_ENTRY 'item123))
-(transfer-item 'item123 [{"from": "oxx", "to": "oxx", "date": "10/1", "event": "creation"}, {"from": "oxx", "to": "oxx2", "date": "10/1", "event": "creation"}] (read-keyset 'anna-keyset))
-(item-all)
-;  ;(item-activity 'item123)
-;    (item-details "item123")
-;  (activity-details 'act1)
-;  (activity-details 'act2)
-;  (activity-details 'act3)
+(item_identification.item-all-by-guard (read-keyset 'anna-keyset))
+(item_identification.item-details "1")
+(item_identification.item-all)
+
+(test-capability (ALLOW_ENTRY "1"))
+(item_identification.transfer-item "1" [{"from": "bob", "to": "", "event": "creation"}, {"from": "bob", "to": "anna", "event": "transfer"}] (read-keyset 'anna-keyset))
+(item_identification.item-details "1")

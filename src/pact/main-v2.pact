@@ -7,7 +7,7 @@
     )
 
     (defcap ALLOW_ENTRY(item_id)
-        (enforce-guard (at "guard" (read tbl_itemsv2 item_id)))
+        (enforce-guard (at "guard" (read tbl_itemsv3 item_id)))
     )
 
     (defcap ALLOW_GUARD(guard)
@@ -16,16 +16,7 @@
 
     ; define table schema
     (defschema items
-        name: string
-        url: string
-        description: string
-        date: string
-        activities: list
-        guard: guard
-    )
-
-    ; new version of table schema
-    (defschema itemsv2
+        id: string
         name: string
         url: string
         description: string
@@ -35,7 +26,7 @@
     )
 
     ; define table
-    (deftable tbl_itemsv2: {itemsv2})
+    (deftable tbl_itemsv3: {items})
     
     ; main logic
     ; function
@@ -49,7 +40,7 @@
         url:string
         description:string
         date:string
-        activities:list
+        activity:object
         guard:guard
         )
 
@@ -59,31 +50,35 @@
         (enforce (!= url "") "Url is required")
 
         (with-capability (ALLOW_GUARD guard)
-            (tbl-itemsv2-insert 
+            (tbl-items-insert 
                 item_id 
                 name
                 url
                 description
                 date
-                activities
+                activity
                 guard)
 
             (format "Item {} created, Guard: {}" [item_id, guard])
         )
     )
 
-    (defun item-details:object(item_id)
-       {"body": (read tbl_itemsv2 item_id), "keys": item_id}
+    (defun item-details:list(item_id)
+        (select tbl_itemsv3 (where 'id (= item_id)))
     )
 
     (defun item-all:list()
-        (map (item-details) (keys tbl_itemsv2))
+        (select tbl_itemsv3 (constantly true))
+    )
+
+    (defun item-all-by-guard:list(guard)
+        (select tbl_itemsv3 (where 'guard (= guard)))
     )
 
     (defun transfer-item:object(
-            item_id:string
-            activities:list
-            receiver:guard
+        item_id:string
+        activities:list
+        receiver:guard
         )
 
         (enforce (!= item_id "") "Item id is required")
@@ -91,49 +86,57 @@
         
         ; owner only
         (with-capability (ALLOW_ENTRY item_id)
-            (with-read tbl_itemsv2 item_id {
+            (with-read tbl_itemsv3 item_id {
                 "guard":= sender
                 }
                 
-                (tbl-itemsv2-update item_id activities receiver)
+                (tbl-items-update 
+                    item_id 
+                    activities 
+                    receiver)
 
                 (format "Item {} was successfully transferred from {} to {}" [item_id, sender, receiver])
             )
         )
     )
 
-    (defun tbl-itemsv2-insert (
+    (defun tbl-items-insert (
         item_id:string
         name:string
         url:string
         description:string
         date:string
-        activities:list
+        activity:object
         guard:guard
         )
 
         (require-capability (ALLOW_GUARD guard))
 
-        (insert tbl_itemsv2 item_id {
+        (insert tbl_itemsv3 item_id {
+            'id: item_id,
             'name: name,
             'url: url,
             'description: description,
             'date: date,
-            'activities: activities,
+            'activities: [activity],
             'guard: guard
         })
     )
 
-    (defun tbl-itemsv2-update (
+    (defun tbl-items-update (
         item_id:string
         activities:list
         receiver:guard
         )
 
         (require-capability (ALLOW_ENTRY item_id))
-        (update tbl_itemsv2 item_id {"guard": receiver, "activities": activities})
+
+        (update tbl_itemsv3 item_id {
+            'guard: receiver, 
+            'activities: activities
+        })
     )
     
 )
 
-(create-table tbl_itemsv2)
+(create-table tbl_itemsv3)
