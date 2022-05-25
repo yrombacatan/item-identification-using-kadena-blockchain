@@ -66,9 +66,7 @@ const ItemMint = () => {
       const date = getDate();
       const itemId = uuidv4();
       const url = await uploadImageToIpfs();
-      const activity = [
-        { from: account, to: "", date: date, event: "creation" },
-      ];
+      const activity = { from: account, to: "", date: date, event: "creation" };
 
       const cap1 = Pact.lang.mkCap(
         "Gas Payer",

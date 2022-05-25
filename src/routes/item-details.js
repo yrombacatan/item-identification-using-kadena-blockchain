@@ -72,18 +72,15 @@ const ItemDetails = () => {
       };
 
       const { result } = await Pact.fetch.local(cmd, kadenaAPI.meta.host);
-      console.log(result);
+
       if (result.status === "failure") {
         setItem("");
         setActivities("");
         return toastError(result.error.message);
       }
 
-      const item = { ...result.data.body, keys: result.data.keys };
-      const activityList = [...result.data.body.activities];
-
-      setItem(item);
-      setActivities(activityList);
+      setItem(result.data[0]);
+      setActivities(result.data[0].activities);
     } catch (error) {
       setItem("");
       setActivities("");
@@ -112,7 +109,7 @@ const ItemDetails = () => {
               {item.guard.keys[0] ===
               removePrefixK(localStorage.getItem("accountAddress")) ? (
                 <button
-                  onClick={() => navigate(`/items/${item.keys}/transfer`)}
+                  onClick={() => navigate(`/items/${item.id}/transfer`)}
                   className="bg-blue-500 rounded shadow text-white font-semibold px-5 py-2"
                 >
                   Transfer

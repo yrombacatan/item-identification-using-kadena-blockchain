@@ -59,7 +59,7 @@ const GlobalFilter = ({
       <span className="text-gray-700">Search: </span>
       <input
         type="text"
-        class="mt-1 block sm:w-1/4 rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring-opacity-50"
+        className="mt-1 block sm:w-1/4 rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring-opacity-50"
         value={value || ""}
         onChange={(e) => {
           setValue(e.target.value);

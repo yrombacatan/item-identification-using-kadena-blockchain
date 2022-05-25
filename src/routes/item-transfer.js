@@ -65,9 +65,7 @@ const ItemTransfer = () => {
         return toastError(result.error.message);
       }
 
-      const item = { ...result.data.body, keys: result.data.keys };
-      console.log(result);
-      setItem(item);
+      setItem(result.data[0]);
     } catch (error) {
       setItem("");
       return toastError(error.message);
@@ -102,12 +100,12 @@ const ItemTransfer = () => {
         "Allow Entry",
         "Some guard",
         "free.item_identification.ALLOW_ENTRY",
-        [`${item.keys}`]
+        [`${item.id}`]
       );
 
       // prettier-ignore
       const cmd = {
-        pactCode: `(free.item_identification.transfer-item "${item.keys}" ${JSON.stringify(activityList)} (read-keyset "receiver-keyset"))`,
+        pactCode: `(free.item_identification.transfer-item "${item.id}" ${JSON.stringify(activityList)} (read-keyset "receiver-keyset"))`,
         caps: [cap1, cap2],
         envData: {
           "receiver-keyset": [removePrefixK(receiverAddress)],

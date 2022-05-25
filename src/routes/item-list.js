@@ -9,6 +9,8 @@ import ReactTable from "../components/Table";
 import Identicon from "react-hooks-identicons";
 import FeatherIcon from "feather-icons-react";
 
+import { removePrefixK } from "../utils";
+
 const ItemList = () => {
   const [items, setItems] = useState("");
   const [loading, setLoading] = useState(true);
@@ -17,7 +19,13 @@ const ItemList = () => {
   const fetchItems = async () => {
     try {
       const cmd = {
-        pactCode: "(free.item_identification.item-all)",
+        pactCode:
+          "(free.item_identification.item-all-by-guard (read-keyset 'user-keyset))",
+        envData: {
+          "user-keyset": [
+            removePrefixK(localStorage.getItem("accountAddress")),
+          ],
+        },
         meta: Pact.lang.mkMeta(
           kadenaAPI.meta.sender,
           kadenaAPI.meta.chainId,
@@ -39,9 +47,8 @@ const ItemList = () => {
       }
 
       const itemList = result.data.map((v) => ({
-        ...v.body,
-        keys: v.keys,
-        link: `/items/${v.keys}`,
+        ...v,
+        link: `/items/${v.id}`,
       }));
 
       setLoading(false);
@@ -99,7 +106,7 @@ const ItemList = () => {
             className="bg-blue-500 hover:bg-blue-400 rounded shadow text-white font-semibold px-10 py-2"
             onClick={() => navigate("/items/mint")}
           >
-            <i class="fa-solid fa-plus"></i>Create
+            <i className="fa-solid fa-plus"></i>Create
           </button>
           <button
             className="border text-red-500 rounded shadow px-5 py-2 hover:bg-red-500 hover:text-white transition-all"
