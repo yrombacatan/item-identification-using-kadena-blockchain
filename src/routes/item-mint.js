@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+
+import Pact from "pact-lang-api";
+import { create } from "ipfs-http-client";
+import { v4 as uuidv4 } from "uuid";
+
 import PreviewDropzone from "../components/Dropzone";
 import {
   ToastifyContainer,
@@ -7,15 +12,12 @@ import {
   toastLoading,
   toastUpdate,
 } from "../components/Toastify";
+import ErrorContainer from "../components/ErrorContainer";
 
-import Pact from "pact-lang-api";
 import kadenaAPI from "../kadena-config";
 import { checkWallet, signTransaction } from "../wallet";
 import { getDate, removePrefixK } from "../utils";
 
-import { v4 as uuidv4 } from "uuid";
-
-import { create } from "ipfs-http-client";
 const ipfsClient = create("https://ipfs.infura.io:5001/api/v0");
 
 const ItemMint = () => {
@@ -26,7 +28,6 @@ const ItemMint = () => {
   const [inputList, setInputList] = useState({
     name: "",
     description: "",
-    attributes: "",
   });
   const [imageBuffer, setImageBuffer] = useState({
     buffer: "",
@@ -38,6 +39,23 @@ const ItemMint = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setInputList((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleInputValidation = () => {
+    let errorList = [];
+    if (inputList.name === "" || inputList.name === false) {
+      errorList.push("Name is required!");
+    }
+    if (inputList.description === "" || inputList.description === false) {
+      errorList.push("Description is required!");
+    }
+    if (imageBuffer.buffer === "" || imageBuffer.buffer === false) {
+      errorList.push("Image is required!");
+    }
+
+    if (errorList.length > 0) {
+      return { errors: errorList };
+    }
   };
 
   const captureFile = (file) => {
@@ -61,6 +79,11 @@ const ItemMint = () => {
   };
 
   const handleMintButton = async () => {
+    const { errors } = handleInputValidation();
+    if (errors) {
+      return setError(errors);
+    }
+
     try {
       const account = checkWallet();
       const date = getDate();
@@ -128,6 +151,8 @@ const ItemMint = () => {
         render: result.data,
         type: "success",
         isLoading: false,
+        autoClose: 3000,
+        onClose: () => navigate("/items"),
       });
     } catch (error) {
       toastUpdate(id, {
@@ -152,6 +177,7 @@ const ItemMint = () => {
     <main className="flex justify-center items-center p-5">
       <div className="sm:w-1/2 -translate-y-10 text-center w-full p-5 md:p-10 shadow rounded">
         <h1 className="text-2xl font-bold">Create your Item</h1>
+        {error && <ErrorContainer errors={error} setError={setError} />}
         <div className="md:flex gap-10">
           <div className="md:w-2/5">
             <PreviewDropzone onCapture={captureFile} />
