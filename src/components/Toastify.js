@@ -24,11 +24,11 @@ const toastLoading = (msg) => {
 };
 
 const toastUpdate = (id, otherProps) => {
-  toast.update(id, { ...otherProps, ...props });
+  toast.update(id, { ...props, ...otherProps });
 };
 
 const ToastifyContainer = (props) => {
-  return <ToastContainer {...props} />;
+  return <ToastContainer {...props} limit={1} />;
 };
 
 export {

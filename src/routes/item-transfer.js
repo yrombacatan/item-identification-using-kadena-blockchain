@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
+import Pact from "pact-lang-api";
+import FeatherIcon from "feather-icons-react";
+import { QRCodeSVG } from "qrcode.react";
+
 import {
   ToastifyContainer,
   toastError,
   toastLoading,
   toastUpdate,
 } from "../components/Toastify";
-import FeatherIcon from "feather-icons-react";
-import { QRCodeSVG } from "qrcode.react";
-
-import Pact from "pact-lang-api";
 
 import kadenaAPI from "../kadena-config";
 import { checkWallet, signTransaction, fetchAccount } from "../wallet";
@@ -152,6 +152,8 @@ const ItemTransfer = () => {
         render: result.data,
         type: "success",
         isLoading: false,
+        autoClose: 3000,
+        onClose: () => navigate(`/items/${params.id}`),
       });
     } catch (error) {
       toastError(error.message);
@@ -245,7 +247,7 @@ const ItemTransfer = () => {
                   className="bg-blue-500 rounded shadow text-white font-semibold px-5 py-2 mt-5"
                   onClick={handleTransfer}
                 >
-                  Submit
+                  Transfer
                 </button>
               </div>
               <div>
