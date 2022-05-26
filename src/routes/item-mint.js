@@ -56,6 +56,8 @@ const ItemMint = () => {
     if (errorList.length > 0) {
       return { errors: errorList };
     }
+
+    return { errors: false };
   };
 
   const captureFile = (file) => {
