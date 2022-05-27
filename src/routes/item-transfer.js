@@ -181,7 +181,7 @@ const ItemTransfer = () => {
   return (
     <>
       {item && (
-        <main className="sm:w-4/5 mx-auto mt-10 h-100 p-5 sm:10 sm:p-10 shadow">
+        <main>
           <h1 className="text-2xl font-semibold text-center mb-20">
             Item Transfer
           </h1>
@@ -190,7 +190,7 @@ const ItemTransfer = () => {
               <div className="w-full md:flex-none md:w-2/5 relative">
                 <img
                   src={item.url}
-                  className="md:w-full max-h-96 object-cover cursor-pointer"
+                  className="md:w-full max-h-96 object-cover cursor-pointer bg-no-repeat rounded shadow-md overflow-hidden"
                   onClick={() => setShowImage(!showImage)}
                 />
                 <div

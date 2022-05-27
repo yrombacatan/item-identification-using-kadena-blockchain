@@ -99,7 +99,7 @@ const ItemDetails = () => {
   return (
     <>
       {item && (
-        <main className="sm:w-4/5 mx-auto mt-10 h-100 p-5 sm:10 sm:p-10 shadow">
+        <main>
           <h1 className="text-2xl font-semibold text-center mb-10">
             Item Details
           </h1>

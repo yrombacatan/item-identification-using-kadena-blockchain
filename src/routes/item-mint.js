@@ -176,8 +176,8 @@ const ItemMint = () => {
   }, [requestKey]);
 
   return (
-    <main className="flex justify-center items-center p-5">
-      <div className="sm:w-1/2 -translate-y-10 text-center w-full p-5 md:p-10 shadow rounded">
+    <main>
+      <div className="sm:w-3/4 sm:mx-auto text-center w-full">
         <h1 className="text-2xl font-bold">Create your Item</h1>
         {error && <ErrorContainer errors={error} setError={setError} />}
         <div className="md:flex gap-10">
