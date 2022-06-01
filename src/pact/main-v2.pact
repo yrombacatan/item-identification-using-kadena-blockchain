@@ -1,5 +1,3 @@
-(define-keyset 'jbsi-admin-keyset)
-
 (module item_identification GOVERNANCE
     ; capability
     (defcap GOVERNANCE()
@@ -10,24 +8,46 @@
         (enforce-guard (at "guard" (read tbl_itemsv3 item_id)))
     )
 
+    (defcap ALLOW_USER(user_id)
+        (enforce-guard (at "guard" (read tbl_users user_id)))
+    )
+
     (defcap ALLOW_GUARD(guard)
         (enforce-guard guard)
     )
 
     ; define table schema
     (defschema items
-        id: string
-        name: string
-        url: string
-        description: string
-        date: string
-        activities: list
-        guard: guard
+        id:string
+        name:string
+        url:string
+        description:string
+        tags:list
+        date:string
+        activities:list
+        guard:guard
+    )
+
+    (defschema transactions
+        id:string
+        from:string
+        to:string
+        event:string
+    )
+
+    (defschema users
+        id:string
+        image:string
+        fname:string
+        lname:string
+        gender:bool
+        guard:guard
     )
 
     ; define table
     (deftable tbl_itemsv3: {items})
-    
+    (deftable tbl_users: {users})
+
     ; main logic
     ; function
     (defun welcome-message()
@@ -39,8 +59,9 @@
         name:string
         url:string
         description:string
+        tags: list
         date:string
-        activity:object
+        activity:list
         guard:guard
         )
 
@@ -48,6 +69,8 @@
         (enforce (!= item_id "") "Item id is required")
         (enforce (!= name "") "Item name id is required")
         (enforce (!= url "") "Url is required")
+        (enforce (!= description "") "Description is required")
+        (enforce (!= (length tags) 0) "Tags is required")
 
         (with-capability (ALLOW_GUARD guard)
             (tbl-items-insert 
@@ -55,6 +78,7 @@
                 name
                 url
                 description
+                tags
                 date
                 activity
                 guard)
@@ -100,13 +124,55 @@
         )
     )
 
+    (defun create-user:string(
+        user_id:string
+        image:string
+        fname:string
+        lname:string
+        gender:bool
+        guard:guard
+        )
+
+        (insert tbl_users user_id {
+            'image: image,
+            'fname: fname,
+            'lname: lname,
+            'gender: gender,
+            'guard: guard
+        })
+
+        (format "User created")
+    )
+
+    (defun update-user:string(
+        user_id:string
+        image:string
+        fname:string
+        lname:string
+        gender:bool
+        )
+
+        (with-capability (ALLOW_USER user_id)
+            (tbl-users-update
+                user_id
+                image
+                fname
+                lname
+                gender)
+
+            (format "User updated")
+        )
+        
+    )
+
     (defun tbl-items-insert (
         item_id:string
         name:string
         url:string
         description:string
+        tags:list
         date:string
-        activity:object
+        activity:list
         guard:guard
         )
 
@@ -117,8 +183,9 @@
             'name: name,
             'url: url,
             'description: description,
+            'tags: tags,
             'date: date,
-            'activities: [activity],
+            'activities: activity,
             'guard: guard
         })
     )
@@ -136,7 +203,26 @@
             'activities: activities
         })
     )
+
+    (defun tbl-users-update (
+        user_id:string
+        image:string
+        fname:string
+        lname:string
+        gender:bool
+        )
+        
+        (require-capability (ALLOW_USER user_id))
+
+        (update tbl_users user_id {
+            'image: image,
+            'fname: fname,
+            'lname: lname,
+            'gender: gender
+        })
+    )
     
 )
 
 (create-table tbl_itemsv3)
+(create-table tbl_users)

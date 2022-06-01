@@ -7,11 +7,10 @@ import kadenaAPI from "../kadena-config";
 import { ToastifyContainer, toastError } from "../components/Toastify";
 import ReactTable from "../components/Table";
 import Identicon from "react-hooks-identicons";
-import FeatherIcon from "feather-icons-react";
 
 import { removePrefixK } from "../utils";
 
-const ItemList = () => {
+const UserProfile = () => {
   const [items, setItems] = useState("");
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -20,7 +19,7 @@ const ItemList = () => {
     try {
       const cmd = {
         pactCode:
-          "(free.item_identification.item-all-by-guard (read-keyset 'user-keyset))",
+          "(item_identification.item-all-by-guard (read-keyset 'user-keyset))",
         envData: {
           "user-keyset": [
             removePrefixK(localStorage.getItem("accountAddress")),
@@ -93,18 +92,9 @@ const ItemList = () => {
 
   return (
     <main>
-      <h1 className="text-2xl font-semibold text-center mb-10">Dashboard</h1>
+      <h1 className="text-2xl font-semibold text-center mb-10">Profile</h1>
 
       <div className="w-100 mx-auto bg-white rounded mb-10">
-        <div className="flex items-center justify-end mb-10">
-          <button
-            className="bg-blue-500 hover:bg-blue-400 rounded shadow text-white font-semibold px-10 py-2"
-            onClick={() => navigate("/items/mint")}
-          >
-            <i className="fa-solid fa-plus"></i>Create
-          </button>
-        </div>
-
         <div
           className="w-40 h-28 bg-indigo-300 mx-auto rounded text mb-5"
           style={{ height: "fit-content", width: "fit-content" }}
@@ -120,7 +110,7 @@ const ItemList = () => {
       </div>
 
       <div className="bg-white rounded">
-        <p className="font-semibold text-left">ITEM LIST</p>
+        <p className="font-semibold text-left">Transaction List</p>
         {loading && <p>Loading...</p>}
         {items && <ReactTable columns={columns} data={items} />}
       </div>
@@ -130,4 +120,4 @@ const ItemList = () => {
   );
 };
 
-export default ItemList;
+export default UserProfile;

@@ -162,6 +162,19 @@ const ItemDetails = () => {
                     {item.description}
                   </p>
                 </div>
+
+                <div>
+                  <p className="font-semibold text-gray-500 text-sm mt-5">
+                    Tags
+                  </p>
+                  <div className="flex gap-2 text-sm overflow-auto mt-1">
+                    {item.tags.map((tag) => (
+                      <span className="px-2 py-1 rounded bg-gray-100">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
 

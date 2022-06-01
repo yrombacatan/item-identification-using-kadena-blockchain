@@ -28,6 +28,8 @@ const ItemMint = () => {
   const [inputList, setInputList] = useState({
     name: "",
     description: "",
+    tag: "",
+    tagList: [],
   });
   const [imageBuffer, setImageBuffer] = useState({
     buffer: "",
@@ -58,6 +60,24 @@ const ItemMint = () => {
     }
 
     return { errors: false };
+  };
+
+  const handleTags = ({ code }) => {
+    if (code === "Backspace") {
+      if (inputList.tag != "") return;
+      return setInputList((prev) => ({
+        ...prev,
+        tagList: prev.tagList.slice(0, -1),
+      }));
+    }
+    if (inputList.tag.trim() === "" || inputList.tag == false) return;
+    if (code === "Space" || code === "Enter") {
+      setInputList((prev) => ({
+        ...prev,
+        tagList: [...prev.tagList, prev.tag, ""],
+        tag: "",
+      }));
+    }
   };
 
   const captureFile = (file) => {
@@ -91,7 +111,10 @@ const ItemMint = () => {
       const date = getDate();
       const itemId = uuidv4();
       const url = await uploadImageToIpfs();
-      const activity = { from: account, to: "", date: date, event: "creation" };
+      const activity = [
+        { from: account, to: "", date: date, event: "creation" },
+      ];
+      const tags = inputList.tagList.filter((tag) => tag !== "");
 
       const cap1 = Pact.lang.mkCap(
         "Gas Payer",
@@ -109,7 +132,7 @@ const ItemMint = () => {
 
       // prettier-ignore
       const cmd = {
-        pactCode: `(free.item_identification.create-item "${itemId}" "${inputList.name}" "${url}" "${inputList.description}" "${date}" ${JSON.stringify(activity)} (read-keyset "user-keyset"))`,
+        pactCode: `(free.item_identification.create-item "${itemId}" "${inputList.name}" "${url}" "${inputList.description}" ${JSON.stringify(tags)} "${date}" ${JSON.stringify(activity)} (read-keyset "user-keyset"))`,
         caps: [cap1, cap2],
         envData: {
           "user-keyset": [removePrefixK(account)],
@@ -122,7 +145,7 @@ const ItemMint = () => {
         ttl: kadenaAPI.meta.ttl,
         networkId: kadenaAPI.meta.networkId,
       };
-
+      console.log(cmd);
       const { requestKeys } = await signTransaction(cmd);
       setRequestKey(requestKeys[0]);
     } catch (error) {
@@ -166,6 +189,15 @@ const ItemMint = () => {
     }
   };
 
+  const TagList = ({ tagList }) => {
+    const newTagList = tagList.filter((tag) => tag !== "");
+    return newTagList.map((tag) => (
+      <span key={tag} className="px-2 py-1 rounded shadow bg-gray-100">
+        {tag}
+      </span>
+    ));
+  };
+
   useEffect(() => {
     if (!requestKey) return;
     let allow = true;
@@ -180,13 +212,16 @@ const ItemMint = () => {
       <div className="sm:w-3/4 sm:mx-auto text-center w-full">
         <h1 className="text-2xl font-bold">Create your Item</h1>
         {error && <ErrorContainer errors={error} setError={setError} />}
-        <div className="md:flex gap-10">
+        <div className="md:flex gap-10 mt-5">
           <div className="md:w-2/5">
+            <p className="text-left text-slate-900 font-medium mt-5">
+              Supported file: JPEG, PNG
+            </p>
             <PreviewDropzone onCapture={captureFile} />
           </div>
           <div className="md:w-3/5 mt-5">
             <div className="flex flex-col mb-5">
-              <label className="text-left text-gray-500 sm:basis-1/4">
+              <label className="text-left text-slate-900 font-medium sm:basis-1/4">
                 Name
               </label>
               <input
@@ -198,7 +233,7 @@ const ItemMint = () => {
               />
             </div>
             <div className="flex flex-col mb-5">
-              <label className="text-left text-gray-500 sm:basis-1/4">
+              <label className="text-left text-slate-900 font-medium sm:basis-1/4">
                 Description
               </label>
               <textarea
@@ -208,6 +243,24 @@ const ItemMint = () => {
                 value={inputList.description}
                 onChange={handleInputChange}
               />
+            </div>
+
+            <div className="flex flex-col mb-5">
+              <label className="text-left text-slate-900 font-medium sm:basis-1/4">
+                Tags
+              </label>
+              <div className="w-full flex flex-wrap gap-2 p-2 border rounded border-gray-300">
+                {/* {inputList.tagList.length > 0 && ( */}
+                <TagList tagList={inputList.tagList} />
+                {/* )} */}
+                <input
+                  name="tag"
+                  className="focus:outline-none flex-auto"
+                  value={inputList.tag}
+                  onChange={handleInputChange}
+                  onKeyUp={handleTags}
+                />
+              </div>
             </div>
 
             <div className="flex gap-5 flex-col md:flex-row">

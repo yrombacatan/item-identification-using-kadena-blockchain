@@ -27,7 +27,10 @@ const NavSmallScreen = ({ isOpenMenu, setIsOpenMenu }) => {
           <li>
             <button
               className="w-full flex items-center gap-10 py-2"
-              onClick={() => {}}
+              onClick={() => {
+                setIsOpenMenu(false);
+                navigate("/profiles");
+              }}
             >
               <FeatherIcon icon="user" className="text-gray-500" />
               <span className="font-medium">Profile</span>
@@ -109,20 +112,12 @@ const NavLargeScreen = () => {
             <NavOverlay isOpen={isProfileOpen} setIsOpen={setIsProfileOpen}>
               <ul className="flex flex-col gap-3">
                 <li>
-                  <a
-                    href="#"
+                  <button
                     className="text-gray-500 transition-all hover:text-blue-400"
+                    onClick={() => navigate("/profiles")}
                   >
                     Profile
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-gray-500 transition-all hover:text-blue-400"
-                  >
-                    Transaction
-                  </a>
+                  </button>
                 </li>
                 <li>
                   <button
