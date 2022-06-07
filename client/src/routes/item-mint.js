@@ -6,16 +6,11 @@ import { create } from "ipfs-http-client";
 import { v4 as uuidv4 } from "uuid";
 
 import PreviewDropzone from "../components/Dropzone";
-import {
-  ToastifyContainer,
-  toastError,
-  toastLoading,
-  toastUpdate,
-} from "../components/Toastify";
+import { ToastifyContainer, toastError } from "../components/Toastify";
 import ErrorContainer from "../components/ErrorContainer";
 
 import kadenaAPI from "../kadena-config";
-import { checkWallet, signTransaction } from "../wallet";
+import { checkWallet, signTransaction, handleListen } from "../wallet";
 import { getDate, removePrefixK } from "../utils";
 
 const ipfsClient = create("https://ipfs.infura.io:5001/api/v0");
@@ -80,7 +75,7 @@ const ItemMint = () => {
     }
   };
 
-  const captureFile = (file) => {
+  const captureFile = ([file]) => {
     const reader = new window.FileReader();
     reader.readAsArrayBuffer(file);
     reader.onloadend = () => {
@@ -119,20 +114,20 @@ const ItemMint = () => {
       const cap1 = Pact.lang.mkCap(
         "Gas Payer",
         "Payer",
-        "free.item-identification-gas-station.GAS_PAYER",
+        "item-identification-gas-station.GAS_PAYER",
         ["hi", { int: 1 }, 1.0]
       );
 
       const cap2 = Pact.lang.mkCap(
         "Allow Guard",
         "Some guard",
-        "free.item_identification.ALLOW_GUARD",
+        "item_identification.ALLOW_GUARD",
         [{ keys: [removePrefixK(account)], pred: "keys-all" }]
       );
 
       // prettier-ignore
       const cmd = {
-        pactCode: `(free.item_identification.create-item "${itemId}" "${inputList.name}" "${url}" "${inputList.description}" ${JSON.stringify(tags)} "${date}" ${JSON.stringify(activity)} (read-keyset "user-keyset"))`,
+        pactCode: `(item_identification.create-item "${itemId}" "${inputList.name}" "${url}" "${inputList.description}" ${JSON.stringify(tags)} "${date}" ${JSON.stringify(activity)} (read-keyset "user-keyset"))`,
         caps: [cap1, cap2],
         envData: {
           "user-keyset": [removePrefixK(account)],
@@ -153,39 +148,31 @@ const ItemMint = () => {
     }
   };
 
-  const handleListen = async (requestKey) => {
-    const id = toastLoading(
-      `Transaction ${requestKey} is being process on the blockchain.`
-    );
-
+  const handleCreateTransaction = async ({ result, reqKey, metaData, gas }) => {
+    // create transaction api
+    // call after minting
     try {
-      const { result, gas } = await Pact.fetch.listen(
-        { listen: requestKey },
-        kadenaAPI.meta.host
-      );
-      if (result.status === "failure") {
-        return toastUpdate(id, {
-          render: result.error.message,
-          type: "error",
-          isLoading: false,
-        });
-      }
+      const body = {
+        item_id: result.data.split(" ").at(1),
+        request_key: reqKey,
+        gas: gas,
+        meta_data: metaData,
+        from: localStorage.getItem("accountAddress"),
+        event: "creation",
+      };
 
-      console.log(result);
-      toastUpdate(id, {
-        render: result.data,
-        type: "success",
-        isLoading: false,
-        autoClose: 3000,
-        onClose: () => navigate("/items"),
+      const res = await fetch("http://localhost:3001/api/transaction", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
       });
+
+      const json = await res.json();
+      console.log(json);
     } catch (error) {
-      toastUpdate(id, {
-        render: error.message,
-        type: "error",
-        isLoading: false,
-      });
-      console.log("im here");
+      console.log(error);
     }
   };
 
@@ -200,8 +187,22 @@ const ItemMint = () => {
 
   useEffect(() => {
     if (!requestKey) return;
+
+    async function listen() {
+      const data = await handleListen(requestKey, {
+        navigate,
+        location: "/items",
+      });
+
+      // remove on testnet
+      data.metaData = {};
+      await handleCreateTransaction(data);
+    }
+
     let allow = true;
-    if (allow) handleListen(requestKey);
+    if (allow) {
+      listen();
+    }
 
     // cleanup effect
     return () => (allow = false);
@@ -214,14 +215,14 @@ const ItemMint = () => {
         {error && <ErrorContainer errors={error} setError={setError} />}
         <div className="md:flex gap-10 mt-5">
           <div className="md:w-2/5">
-            <p className="text-left text-slate-900 font-medium mt-5">
+            <p className="text-left text-gray-500 text-sm font-medium mt-5">
               Supported file: JPEG, PNG
             </p>
-            <PreviewDropzone onCapture={captureFile} />
+            <PreviewDropzone additionalFunction={captureFile} />
           </div>
           <div className="md:w-3/5 mt-5">
             <div className="flex flex-col mb-5">
-              <label className="text-left text-slate-900 font-medium sm:basis-1/4">
+              <label className="text-left text-gray-500 text-sm font-medium sm:basis-1/4">
                 Name
               </label>
               <input
@@ -233,7 +234,7 @@ const ItemMint = () => {
               />
             </div>
             <div className="flex flex-col mb-5">
-              <label className="text-left text-slate-900 font-medium sm:basis-1/4">
+              <label className="text-left text-gray-500 text-sm font-medium sm:basis-1/4">
                 Description
               </label>
               <textarea
@@ -246,7 +247,7 @@ const ItemMint = () => {
             </div>
 
             <div className="flex flex-col mb-5">
-              <label className="text-left text-slate-900 font-medium sm:basis-1/4">
+              <label className="text-left text-gray-500 text-sm font-medium sm:basis-1/4">
                 Tags
               </label>
               <div className="w-full flex flex-wrap gap-2 p-2 border rounded border-gray-300">

@@ -16,9 +16,10 @@ const Login = () => {
 
   const handleConnectButton = async () => {
     try {
-      const { data } = await fetchAccount(address);
-      await connectWallet(data.account);
-      localStorage.setItem("accountAddress", data.account);
+      // const { data } = await fetchAccount(address);
+      // await connectWallet(data.account);
+      //localStorage.setItem("accountAddress", data.account);
+      localStorage.setItem("accountAddress", address);
       navigate("/items");
     } catch (error) {
       toastError(error.message);

@@ -39,6 +39,18 @@ const NavSmallScreen = ({ isOpenMenu, setIsOpenMenu }) => {
           <li>
             <button
               className="w-full flex items-center gap-10 py-2"
+              onClick={() => {
+                setIsOpenMenu(false);
+                navigate("/items");
+              }}
+            >
+              <FeatherIcon icon="bell" className="text-gray-500" />
+              <span className="font-medium">Items</span>
+            </button>
+          </li>
+          <li>
+            <button
+              className="w-full flex items-center gap-10 py-2"
               onClick={() => {}}
             >
               <FeatherIcon icon="bell" className="text-gray-500" />
@@ -117,6 +129,14 @@ const NavLargeScreen = () => {
                     onClick={() => navigate("/profiles")}
                   >
                     Profile
+                  </button>
+                </li>
+                <li>
+                  <button
+                    className="text-gray-500 transition-all hover:text-blue-400"
+                    onClick={() => navigate("/items")}
+                  >
+                    Items
                   </button>
                 </li>
                 <li>

@@ -1,7 +1,10 @@
+import { useNavigate } from "react-router-dom";
+
 import Pact from "pact-lang-api";
 import kadenaAPI from "./kadena-config";
 
 import { removePrefixK } from "./utils";
+import { toastLoading, toastUpdate } from "./components/Toastify";
 
 const connectWallet = async (account) => {
   const hasXwallet = window?.kadena?.isKadena === true;
@@ -178,4 +181,51 @@ const signTransaction = async (cmdToSign) => {
   return data;
 };
 
-export { checkWallet, fetchAccount, connectWallet, signTransaction };
+const handleListen = async (
+  requestKey,
+  { navigate = false, location = "" }
+) => {
+  const id = toastLoading(
+    `Transaction ${requestKey} is being process on the blockchain.`
+  );
+
+  try {
+    const data = await Pact.fetch.listen(
+      { listen: requestKey },
+      kadenaAPI.meta.host
+    );
+
+    if (data.result.status === "failure") {
+      return toastUpdate(id, {
+        render: data.result.error.message,
+        type: "error",
+        isLoading: false,
+      });
+    }
+
+    toastUpdate(id, {
+      render: data.result.data,
+      type: "success",
+      isLoading: false,
+      autoClose: 3000,
+      onClose: () => (navigate ? navigate(location) : {}),
+    });
+
+    console.log(data);
+    return data;
+  } catch (error) {
+    toastUpdate(id, {
+      render: error.message,
+      type: "error",
+      isLoading: false,
+    });
+  }
+};
+
+export {
+  checkWallet,
+  fetchAccount,
+  connectWallet,
+  signTransaction,
+  handleListen,
+};

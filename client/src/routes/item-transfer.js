@@ -46,7 +46,7 @@ const ItemTransfer = () => {
   const fetchItem = async (id) => {
     try {
       const cmd = {
-        pactCode: `(free.item_identification.item-details "${id}")`,
+        pactCode: `(item_identification.item-details "${id}")`,
         meta: Pact.lang.mkMeta(
           kadenaAPI.meta.sender,
           kadenaAPI.meta.chainId,
@@ -92,20 +92,20 @@ const ItemTransfer = () => {
       const cap1 = Pact.lang.mkCap(
         "Gas Payer",
         "Payer",
-        "free.item-identification-gas-station.GAS_PAYER",
+        "item-identification-gas-station.GAS_PAYER",
         ["hi", { int: 1 }, 1.0]
       );
 
       const cap2 = Pact.lang.mkCap(
         "Allow Entry",
         "Some guard",
-        "free.item_identification.ALLOW_ENTRY",
+        "item_identification.ALLOW_ENTRY",
         [`${item.id}`]
       );
 
       // prettier-ignore
       const cmd = {
-        pactCode: `(free.item_identification.transfer-item "${item.id}" ${JSON.stringify(activityList)} (read-keyset "receiver-keyset"))`,
+        pactCode: `(item_identification.transfer-item "${item.id}" ${JSON.stringify(activityList)} (read-keyset "receiver-keyset"))`,
         caps: [cap1, cap2],
         envData: {
           "receiver-keyset": [removePrefixK(receiverAddress)],
@@ -229,7 +229,7 @@ const ItemTransfer = () => {
             </div>
 
             <div>
-              <label className="block font-semibold text-gray-500">
+              <label className="block font-medium text-gray-500 text-sm mb-2">
                 Account Address
               </label>
               <input

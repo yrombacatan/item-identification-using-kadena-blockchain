@@ -20,7 +20,7 @@ const ItemList = () => {
     try {
       const cmd = {
         pactCode:
-          "(free.item_identification.item-all-by-guard (read-keyset 'user-keyset))",
+          "(item_identification.item-all-by-guard (read-keyset 'user-keyset))",
         envData: {
           "user-keyset": [
             removePrefixK(localStorage.getItem("accountAddress")),
@@ -48,7 +48,7 @@ const ItemList = () => {
 
       const itemList = result.data.map((v) => ({
         ...v,
-        link: `/items/${v.id}`,
+        onClick: () => navigate(`/items/${v.id}`),
       }));
 
       setLoading(false);
@@ -122,7 +122,13 @@ const ItemList = () => {
       <div className="bg-white rounded">
         <p className="font-semibold text-left">ITEM LIST</p>
         {loading && <p>Loading...</p>}
-        {items && <ReactTable columns={columns} data={items} />}
+        {items && (
+          <ReactTable
+            columns={columns}
+            data={items}
+            rowClass={`hover:bg-gray-50 cursor-pointer transition`}
+          />
+        )}
       </div>
 
       <ToastifyContainer />

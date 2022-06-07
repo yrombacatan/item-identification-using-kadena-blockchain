@@ -37,10 +37,10 @@
 
     (defschema users
         id:string
-        image:string
         fname:string
         lname:string
-        gender:bool
+        email:string
+        website:string
         guard:guard
     )
 
@@ -124,43 +124,49 @@
         )
     )
 
-    (defun create-user:string(
+    (defun create-user:object(
         user_id:string
-        image:string
         fname:string
         lname:string
-        gender:bool
+        email:string
+        website:string
         guard:guard
         )
 
         (insert tbl_users user_id {
-            'image: image,
+            'id: user_id,
             'fname: fname,
             'lname: lname,
-            'gender: gender,
+            'email: email,
+            'website: website,
             'guard: guard
         })
 
-        (format "User created")
+        (format "User created, {} {}, {}" [fname, lname, user_id])
     )
 
-    (defun update-user:string(
+    (defun user-details:list(guard)
+        (select tbl_users (where 'guard (= guard)))
+    )
+
+    (defun update-user:object(
         user_id:string
-        image:string
         fname:string
         lname:string
-        gender:bool
+        email:string
+        website:string
+        guard:guard
         )
 
         (with-capability (ALLOW_USER user_id)
             (tbl-users-update
                 user_id
-                image
                 fname
                 lname
-                gender)
+                email
+                website)
 
-            (format "User updated")
+            (format "User updated, {} {}, {}" [fname, lname, user_id])
         )
         
     )
@@ -206,19 +212,19 @@
 
     (defun tbl-users-update (
         user_id:string
-        image:string
         fname:string
         lname:string
-        gender:bool
+        email:string
+        website:string
         )
         
         (require-capability (ALLOW_USER user_id))
 
         (update tbl_users user_id {
-            'image: image,
             'fname: fname,
             'lname: lname,
-            'gender: gender
+            'email: email,
+            'website: website
         })
     )
     

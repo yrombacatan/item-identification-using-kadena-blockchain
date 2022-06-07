@@ -2,21 +2,22 @@ import React, { useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import "../styles/Previewdropzone.css";
 
-const PreviewDropzone = (props) => {
+const PreviewDropzone = ({ additionalFunction, multiple = false }) => {
   const [files, setFiles] = useState([]);
 
   const { getRootProps, getInputProps } = useDropzone({
     accept: "image/*",
     onDrop: (acceptedFiles) => {
+      const newFiles = multiple ? acceptedFiles : [acceptedFiles[0]];
       setFiles(
-        acceptedFiles.map((file) =>
+        newFiles.map((file) =>
           Object.assign(file, {
             preview: URL.createObjectURL(file),
           })
         )
       );
 
-      props.onCapture(acceptedFiles[0]);
+      if (additionalFunction) additionalFunction(newFiles);
     },
   });
 

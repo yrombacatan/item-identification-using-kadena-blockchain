@@ -1,0 +1,58 @@
+# This file is for testing the api using the REST Client VS Code Extension
+# Postman alternative
+
+POST http://localhost:3001/api/notification
+Content-Type: application/json
+
+{
+    "item_id": "01",
+    "account_address": "f809be2b76e9ac0d6fc5d6c5c18d119618ea71c1958796d8d9a83bddd118a74e"
+}
+
+###
+GET http://localhost:3001/api/notification/find
+Content-Type: application/json
+
+{
+    "account_address": "f809be2b76e9ac0d6fc5d6c5c18d119618ea71c1958796d8d9a83bddd118a74e"
+}
+
+###
+PUT http://localhost:3001/api/notification/
+Content-Type: application/json
+
+{
+    "id": "62986f178e04cd78a994143a"
+}
+
+###
+PUT http://localhost:3001/api/notification/update-all
+Content-Type: application/json
+
+{
+    "account_address": "f809be2b76e9ac0d6fc5d6c5c18d119618ea71c1958796d8d9a83bddd118a74e"
+}
+
+###
+POST http://localhost:3001/api/transaction
+Content-Type: application/json
+
+{
+    "item_id": "01",
+    "request_key": "jhdh138763761671nsnsd163773",
+    "gas": 400,
+    "meta_data": {
+        "blockheight": 129,
+        "chain": 1,
+        "blockheight": 129,
+        "chain": 1,
+        "blockheight": 129,
+        "chain": 1
+    },
+    "from": "f809be2b76e9ac0d6fc5d6c5c18d119618ea71c1958796d8d9a83bddd118a74e",
+    "event": "creation"
+}
+
+###
+GET http://localhost:3001/api/transaction/
+Content-Type: application/json

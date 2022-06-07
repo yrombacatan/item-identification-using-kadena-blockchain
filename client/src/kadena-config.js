@@ -58,7 +58,7 @@ var kadenaAPI = {
   meta: {
     networkId: networkId,
     chainId: chainId,
-    host: host,
+    host: localhost,
     localhost: localhost,
     creationTime: creationTime,
     //gas price at lowest possible denomination

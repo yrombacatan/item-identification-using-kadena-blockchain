@@ -166,7 +166,7 @@ const Pagination = ({
   );
 };
 
-const Table = ({ columns, data }) => {
+const Table = ({ columns, data, rowClass }) => {
   const {
     getTableProps,
     getTableBodyProps,
@@ -258,9 +258,9 @@ const Table = ({ columns, data }) => {
                   return (
                     <tr
                       {...row.getRowProps()}
-                      className="hover:bg-gray-50 cursor-pointer transition"
+                      className={rowClass}
                       onClick={() =>
-                        row.original.link ? navigate(row.original.link) : ""
+                        row.original.onClick ? row.original.onClick() : null
                       }
                     >
                       {row.cells.map((cell) => {
@@ -292,10 +292,10 @@ const Table = ({ columns, data }) => {
   );
 };
 
-function ReactTable({ columns, data }) {
+function ReactTable({ ...props }) {
   return (
     <div>
-      <Table columns={columns} data={data} />
+      <Table {...props} />
     </div>
   );
 }
