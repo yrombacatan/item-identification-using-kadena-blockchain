@@ -5,16 +5,19 @@ import Pact from "pact-lang-api";
 import FeatherIcon from "feather-icons-react";
 import { QRCodeSVG } from "qrcode.react";
 
-import {
-  ToastifyContainer,
-  toastError,
-  toastLoading,
-  toastUpdate,
-} from "../components/Toastify";
+import { ToastifyContainer, toastError } from "../components/Toastify";
 
 import kadenaAPI from "../kadena-config";
-import { checkWallet, signTransaction, fetchAccount } from "../wallet";
+import {
+  checkWallet,
+  signTransaction,
+  fetchAccount,
+  handleListen,
+} from "../wallet";
 import { getDate, removePrefixK } from "../utils";
+
+import { createTransaction } from "../api/transaction";
+import { createNotification } from "../api/notification";
 
 const ImageViewContainer = ({ url, show, setShowImage }) => {
   const toggleClass = `${show ? "top-0" : "-top-full"}`;
@@ -76,7 +79,7 @@ const ItemTransfer = () => {
 
   const handleTransfer = async () => {
     try {
-      await fetchAccount(receiverAddress);
+      //await fetchAccount(receiverAddress);
       const account = checkWallet();
       const date = getDate();
       const activityList = [
@@ -127,39 +130,6 @@ const ItemTransfer = () => {
     }
   };
 
-  const handleListen = async (requestKey) => {
-    try {
-      const id = toastLoading(
-        `Transaction ${requestKey} is being process on the blockchain.`
-      );
-      setResult("");
-
-      const { result, gas } = await Pact.fetch.listen(
-        { listen: requestKey },
-        kadenaAPI.meta.host
-      );
-      if (result.status === "failure") {
-        return toastUpdate(id, {
-          render: result.error.message,
-          type: "error",
-          isLoading: false,
-        });
-      }
-
-      console.log(result);
-      setResult(result);
-      toastUpdate(id, {
-        render: result.data,
-        type: "success",
-        isLoading: false,
-        autoClose: 3000,
-        onClose: () => navigate(`/items/${params.id}`),
-      });
-    } catch (error) {
-      toastError(error.message);
-    }
-  };
-
   useEffect(() => {
     if (!params.id) return;
     let allow = true;
@@ -171,8 +141,33 @@ const ItemTransfer = () => {
 
   useEffect(() => {
     if (!requestKey) return;
+
+    async function listen() {
+      const data = await handleListen(requestKey, {
+        navigate,
+        location: `/items/${params.id}`,
+      });
+
+      // save transaction
+      data.metaData = {}; // remove this line on testnet
+      await createTransaction({
+        ...data,
+        accountAddress: localStorage.getItem("accountAddress"),
+        eventType: "transfer",
+        to: receiverAddress,
+      }).catch((err) => toastError(err.message));
+
+      // set notification
+      const itemId = data.result.data.split(" ").at(1);
+      await createNotification({ itemId, receiverAddress }).catch((err) =>
+        toastError(err.message)
+      );
+    }
+
     let allow = true;
-    if (allow) handleListen(requestKey);
+    if (allow) {
+      listen();
+    }
 
     // cleanup effect
     return () => (allow = false);

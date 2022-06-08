@@ -28,9 +28,14 @@ const joiSchema = Joi.object({
 const Notification = mongoose.model("Notification", schema);
 
 // index
-route.get("/", async (req, res) => {
+route.get("/:accountAddress", async (req, res) => {
   try {
-    const data = await Notification.find();
+    if (!req.params.accountAddress) {
+      return res.status(401).send("Account address is required");
+    }
+    const data = await Notification.find({
+      account_address: req.params.accountAddress,
+    });
     return res.send(data);
   } catch (error) {
     return res.status(500).send(error);
@@ -47,22 +52,6 @@ route.post("/", async (req, res) => {
     const notification = await new Notification(value);
     const data = await notification.save();
 
-    return res.send(data);
-  } catch (error) {
-    return res.status(500).send(error);
-  }
-});
-
-// find
-route.get("/find", async (req, res) => {
-  if (req.body.account_address == null)
-    return res.status(401).send("Account address is required");
-
-  try {
-    const data = await Notification.find({
-      account_address: req.body.account_address,
-      seen: false,
-    });
     return res.send(data);
   } catch (error) {
     return res.status(500).send(error);

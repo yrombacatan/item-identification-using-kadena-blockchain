@@ -137,9 +137,7 @@ const signTransaction = async (cmdToSign) => {
   let signedCmd = "";
 
   if (hasXWallet) {
-    console.log("before verifiying...");
     await verifyAccount(account);
-    console.log("after verifiying...");
     const xwalletSignRes = await window.kadena.request({
       method: "kda_requestSign",
       networkId: kadenaAPI.meta.networkId,
@@ -156,8 +154,6 @@ const signTransaction = async (cmdToSign) => {
     signedCmd = await Pact.wallet.sign(cmdToSign);
   }
 
-  //console.log(signedCmd);
-
   // test the request first in local
   const localRes = await fetch(`${kadenaAPI.meta.host}/api/v1/local`, {
     method: "POST",
@@ -168,17 +164,13 @@ const signTransaction = async (cmdToSign) => {
   });
 
   const parseLocalRes = await localRes.json();
-  console.log(parseLocalRes);
 
   if (parseLocalRes?.result?.status !== "success") {
-    console.log("not working in local");
     throw new Error(parseLocalRes?.result?.error?.message);
   }
 
   // test request in mainnet
-  const data = await Pact.wallet.sendSigned(signedCmd, kadenaAPI.meta.host);
-
-  return data;
+  return await Pact.wallet.sendSigned(signedCmd, kadenaAPI.meta.host);
 };
 
 const handleListen = async (

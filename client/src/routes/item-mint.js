@@ -13,6 +13,8 @@ import kadenaAPI from "../kadena-config";
 import { checkWallet, signTransaction, handleListen } from "../wallet";
 import { getDate, removePrefixK } from "../utils";
 
+import { createTransaction } from "../api/transaction";
+
 const ipfsClient = create("https://ipfs.infura.io:5001/api/v0");
 
 const ItemMint = () => {
@@ -148,34 +150,6 @@ const ItemMint = () => {
     }
   };
 
-  const handleCreateTransaction = async ({ result, reqKey, metaData, gas }) => {
-    // create transaction api
-    // call after minting
-    try {
-      const body = {
-        item_id: result.data.split(" ").at(1),
-        request_key: reqKey,
-        gas: gas,
-        meta_data: metaData,
-        from: localStorage.getItem("accountAddress"),
-        event: "creation",
-      };
-
-      const res = await fetch("http://localhost:3001/api/transaction", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-      });
-
-      const json = await res.json();
-      console.log(json);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const TagList = ({ tagList }) => {
     const newTagList = tagList.filter((tag) => tag !== "");
     return newTagList.map((tag) => (
@@ -194,9 +168,13 @@ const ItemMint = () => {
         location: "/items",
       });
 
-      // remove on testnet
-      data.metaData = {};
-      await handleCreateTransaction(data);
+      // save transaction
+      data.metaData = {}; // remove this line on testnet
+      await createTransaction({
+        ...data,
+        accountAddress: localStorage.getItem("accountAddress"),
+        eventType: "creation",
+      }).catch((err) => toastError(err.message));
     }
 
     let allow = true;

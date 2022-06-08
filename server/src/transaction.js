@@ -49,9 +49,9 @@ const joiSchema = Joi.object({
 const Transaction = mongoose.model("Transaction", schema);
 
 // index
-route.get("/", async (req, res) => {
+route.get("/:accountAddress", async (req, res) => {
   try {
-    const data = await Transaction.find();
+    const data = await Transaction.find({ from: req.params.accountAddress });
     return res.send(data);
   } catch (error) {
     return res.status(500).send(error);

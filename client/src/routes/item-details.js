@@ -169,7 +169,7 @@ const ItemDetails = () => {
                   </p>
                   <div className="flex gap-2 text-sm overflow-auto mt-1">
                     {item.tags.map((tag) => (
-                      <span className="px-2 py-1 rounded bg-gray-100">
+                      <span key={tag} className="px-2 py-1 rounded bg-gray-100">
                         {tag}
                       </span>
                     ))}

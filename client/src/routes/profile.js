@@ -120,18 +120,16 @@ const Form = ({ input, setInput, onSubmit, disableButton }) => {
 const Transaction = () => {
   const [transactions, setTransactions] = useState("");
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [modalData, setModalData] = useState(null);
 
   const getTransactions = async () => {
     try {
-      const res = await fetch("http://localhost:3001/api/transaction");
+      const res = await fetch(
+        `http://localhost:3001/api/transaction/${localStorage.getItem(
+          "accountAddress"
+        )}`
+      );
       const transactions = await res.json();
-
-      console.log("<-- transactions");
-      console.log(transactions);
-      console.log("transactions end -->");
-
       const newTransactions = transactions.map((transaction) => ({
         ...transaction,
         onClick: () => {
@@ -142,7 +140,7 @@ const Transaction = () => {
       setLoading(false);
       setTransactions(newTransactions);
     } catch (error) {
-      setError(error.message);
+      toastError(error.message);
     }
   };
 
@@ -179,7 +177,7 @@ const Transaction = () => {
 
   return (
     <div className="bg-white rounded">
-      <p className="font-semibold text-left">Transaction List</p>
+      <p className="font-semibold text-left">Transaction History</p>
       {loading && <p>Loading...</p>}
       {transactions && (
         <ReactTable
@@ -218,9 +216,7 @@ const Transaction = () => {
             </div>
             <div>
               <p className="text-sm font-medium text-gray-500">Metadata</p>
-              <p>
-                <pre>{JSON.stringify(modalData.meta_data, null, 4)}</pre>
-              </p>
+              <pre>{JSON.stringify(modalData.meta_data, null, 4)}</pre>
             </div>
           </div>
         </Modal>
