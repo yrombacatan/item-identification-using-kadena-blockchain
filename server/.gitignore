@@ -1,2 +1,4 @@
 node_modules
 mongodb
+package-lock.json
+.env

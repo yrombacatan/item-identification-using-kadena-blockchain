@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
+require("dotenv").config();
 
 async function connectDatabase() {
-  await mongoose.connect("mongodb://localhost:27017/item_identification");
+  await mongoose.connect(process.env.MONGODB);
 }
 
 module.exports = connectDatabase;
