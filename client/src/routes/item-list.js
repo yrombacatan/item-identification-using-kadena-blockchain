@@ -19,8 +19,7 @@ const ItemList = () => {
   const fetchItems = async () => {
     try {
       const cmd = {
-        pactCode:
-          "(item_identification.item-all-by-guard (read-keyset 'user-keyset))",
+        pactCode: `(${kadenaAPI.contractAddress}.item-all-by-guard (read-keyset 'user-keyset))`,
         envData: {
           "user-keyset": [
             removePrefixK(localStorage.getItem("accountAddress")),

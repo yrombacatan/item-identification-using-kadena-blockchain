@@ -116,20 +116,20 @@ const ItemMint = () => {
       const cap1 = Pact.lang.mkCap(
         "Gas Payer",
         "Payer",
-        "item-identification-gas-station.GAS_PAYER",
+        `${kadenaAPI.gasStationAddress}.GAS_PAYER`,
         ["hi", { int: 1 }, 1.0]
       );
 
       const cap2 = Pact.lang.mkCap(
         "Allow Guard",
         "Some guard",
-        "item_identification.ALLOW_GUARD",
+        `${kadenaAPI.contractAddress}.ALLOW_GUARD`,
         [{ keys: [removePrefixK(account)], pred: "keys-all" }]
       );
 
       // prettier-ignore
       const cmd = {
-        pactCode: `(item_identification.create-item "${itemId}" "${inputList.name}" "${url}" "${inputList.description}" ${JSON.stringify(tags)} "${date}" ${JSON.stringify(activity)} (read-keyset "user-keyset"))`,
+        pactCode: `(${kadenaAPI.contractAddress}.create-item "${itemId}" "${inputList.name}" "${url}" "${inputList.description}" ${JSON.stringify(tags)} "${date}" ${JSON.stringify(activity)} (read-keyset "user-keyset"))`,
         caps: [cap1, cap2],
         envData: {
           "user-keyset": [removePrefixK(account)],
@@ -169,7 +169,6 @@ const ItemMint = () => {
       });
 
       // save transaction
-      data.metaData = {}; // remove this line on testnet
       await createTransaction({
         ...data,
         accountAddress: localStorage.getItem("accountAddress"),

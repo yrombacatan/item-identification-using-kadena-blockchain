@@ -269,14 +269,14 @@ const UserProfile = () => {
       const cap1 = Pact.lang.mkCap(
         "Gas Payer",
         "Payer",
-        "item-identification-gas-station.GAS_PAYER",
+        `${kadenaAPI.contractAddress}.GAS_PAYER`,
         ["hi", { int: 1 }, 1.0]
       );
 
       const cap2 = Pact.lang.mkCap(
         "Allow User",
         "Some guard",
-        "item_identification.ALLOW_USER",
+        `${kadenaAPI.contractAddress}.ALLOW_USER`,
         [input.id]
       );
 
@@ -285,7 +285,7 @@ const UserProfile = () => {
 
       // prettier-ignore
       const cmd = {
-        pactCode: `(item_identification.${method} "${input.id ?? userId}" "${input.fname}" "${input.lname}" "${email}" "${website}" (read-keyset "user-keyset"))`,
+        pactCode: `(${kadenaAPI.contractAddress}.${method} "${input.id ?? userId}" "${input.fname}" "${input.lname}" "${email}" "${website}" (read-keyset "user-keyset"))`,
         caps: capabilities,
         envData: {
           "user-keyset": [removePrefixK(account)],
@@ -314,7 +314,7 @@ const UserProfile = () => {
     try {
       const account = checkWallet();
       const cmd = {
-        pactCode: `(item_identification.user-details (read-keyset "user-keyset"))`,
+        pactCode: `(${kadenaAPI.contractAddress}.user-details (read-keyset "user-keyset"))`,
         envData: {
           "user-keyset": [removePrefixK(account)],
         },

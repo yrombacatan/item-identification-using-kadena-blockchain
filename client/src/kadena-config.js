@@ -31,14 +31,14 @@ const node = "api.testnet.chainweb.com";
 
 //unique contract name
 //DEPLOY OWN -> "memory-wall-hash(currentTime + projectName)"
-var contractName = "product_identification";
+var contractName = "item_identification";
 
 //unique gas station contract name
 //DEPLOY OWN -> "memory-wall-gas-station-hash(currentTime + projectName)"
-var gasStationName = "basic-payment-gas-station";
+var gasStationName = "item-identification-gas-station";
 
 //namespace that precedes contract name
-var namespace = "jbsi";
+var namespace = "free";
 
 //api host to send requests
 var host = `https://${node}/chainweb/0.0/${networkId}/chain/${chainId}/pact`;
@@ -58,7 +58,7 @@ var kadenaAPI = {
   meta: {
     networkId: networkId,
     chainId: chainId,
-    host: localhost,
+    host: host,
     localhost: localhost,
     creationTime: creationTime,
     //gas price at lowest possible denomination

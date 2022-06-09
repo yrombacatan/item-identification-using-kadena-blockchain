@@ -59,7 +59,7 @@ const ItemDetails = () => {
   const fetchItem = async (id) => {
     try {
       const cmd = {
-        pactCode: `(item_identification.item-details "${id}")`,
+        pactCode: `(${kadenaAPI.contractAddress}.item-details "${id}")`,
         meta: Pact.lang.mkMeta(
           kadenaAPI.meta.sender,
           kadenaAPI.meta.chainId,

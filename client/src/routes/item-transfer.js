@@ -49,7 +49,7 @@ const ItemTransfer = () => {
   const fetchItem = async (id) => {
     try {
       const cmd = {
-        pactCode: `(item_identification.item-details "${id}")`,
+        pactCode: `(${kadenaAPI.contractAddress}.item-details "${id}")`,
         meta: Pact.lang.mkMeta(
           kadenaAPI.meta.sender,
           kadenaAPI.meta.chainId,
@@ -79,7 +79,7 @@ const ItemTransfer = () => {
 
   const handleTransfer = async () => {
     try {
-      //await fetchAccount(receiverAddress);
+      await fetchAccount(receiverAddress);
       const account = checkWallet();
       const date = getDate();
       const activityList = [
@@ -95,20 +95,20 @@ const ItemTransfer = () => {
       const cap1 = Pact.lang.mkCap(
         "Gas Payer",
         "Payer",
-        "item-identification-gas-station.GAS_PAYER",
+        `${kadenaAPI.gasStationAddress}.GAS_PAYER`,
         ["hi", { int: 1 }, 1.0]
       );
 
       const cap2 = Pact.lang.mkCap(
         "Allow Entry",
         "Some guard",
-        "item_identification.ALLOW_ENTRY",
+        `${kadenaAPI.contractAddress}.ALLOW_ENTRY`,
         [`${item.id}`]
       );
 
       // prettier-ignore
       const cmd = {
-        pactCode: `(item_identification.transfer-item "${item.id}" ${JSON.stringify(activityList)} (read-keyset "receiver-keyset"))`,
+        pactCode: `(${kadenaAPI.contractAddress}.transfer-item "${item.id}" ${JSON.stringify(activityList)} (read-keyset "receiver-keyset"))`,
         caps: [cap1, cap2],
         envData: {
           "receiver-keyset": [removePrefixK(receiverAddress)],
@@ -148,8 +148,7 @@ const ItemTransfer = () => {
         location: `/items/${params.id}`,
       });
 
-      // save transaction
-      data.metaData = {}; // remove this line on testnet
+      // save transaction=
       await createTransaction({
         ...data,
         accountAddress: localStorage.getItem("accountAddress"),
