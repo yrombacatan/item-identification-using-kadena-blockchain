@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import Pact from "pact-lang-api";
 import kadenaAPI from "../kadena-config";
@@ -7,7 +7,6 @@ import kadenaAPI from "../kadena-config";
 import { ToastifyContainer, toastError } from "../components/Toastify";
 import ReactTable from "../components/Table";
 import Identicon from "react-hooks-identicons";
-import FeatherIcon from "feather-icons-react";
 
 import { removePrefixK } from "../utils";
 
@@ -38,7 +37,7 @@ const ItemList = () => {
 
       const { result, gas } = await Pact.fetch.local(cmd, kadenaAPI.meta.host);
       console.log(result);
-      console.log(gas);
+      console.log(cmd);
 
       if (result.status === "failure") {
         setItems("");

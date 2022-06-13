@@ -5,7 +5,12 @@ import Notification from "./Notification";
 
 import { useNavigate } from "react-router-dom";
 
-const NavSmallScreen = ({ isOpenMenu, setOpenMenu }) => {
+const NavSmallScreen = ({
+  isOpenMenu,
+  setOpenMenu,
+  hasNotification,
+  setHasNotification,
+}) => {
   const navigate = useNavigate();
   const [isNotificationOpen, setNotificationOpen] = useState(false);
 
@@ -62,7 +67,11 @@ const NavSmallScreen = ({ isOpenMenu, setOpenMenu }) => {
                 <span className="font-medium">Items</span>
               </button>
             </li>
-            <li>
+            <li
+              className={`${
+                hasNotification ? "flex justify-between items-center" : ""
+              }`}
+            >
               <button
                 className="w-full flex items-center gap-10 py-2"
                 onClick={() => setNotificationOpen(true)}
@@ -70,6 +79,10 @@ const NavSmallScreen = ({ isOpenMenu, setOpenMenu }) => {
                 <FeatherIcon icon="bell" className="text-gray-500" />
                 <span className="font-medium">Notification</span>
               </button>
+
+              {hasNotification && (
+                <span className="w-3 h-3 rounded-full bg-blue-400 top-0 left-1/2 "></span>
+              )}
             </li>
             <li>
               <button
@@ -101,7 +114,10 @@ const NavSmallScreen = ({ isOpenMenu, setOpenMenu }) => {
         }`}
       >
         <div>
-          <Notification setIsOpen={handleCloseBoth}>
+          <Notification
+            setIsOpen={handleCloseBoth}
+            setHasNotification={setHasNotification}
+          >
             <div>
               <button
                 className="bg-gray-200 px-5 py-2 rounded shadow"
@@ -117,7 +133,7 @@ const NavSmallScreen = ({ isOpenMenu, setOpenMenu }) => {
   );
 };
 
-const NavLargeScreen = () => {
+const NavLargeScreen = ({ hasNotification, setHasNotification }) => {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const navigate = useNavigate();
@@ -142,8 +158,15 @@ const NavLargeScreen = () => {
               isOpen={isNotificationOpen}
               setIsOpen={setIsNotificationOpen}
             >
-              <Notification setIsOpen={setIsNotificationOpen} />
+              <Notification
+                setIsOpen={setIsNotificationOpen}
+                setHasNotification={setHasNotification}
+              />
             </NavOverlay>
+
+            {hasNotification && (
+              <span className="absolute w-3 h-3 rounded-full bg-blue-400 top-0 left-1/2 -translate-x-1/2 -z-10"></span>
+            )}
           </li>
           <li className="relative">
             <button
@@ -208,6 +231,7 @@ const NavOverlay = ({ isOpen, setIsOpen, children }) => {
 
 const Header = () => {
   const [isOpenMenu, setOpenMenu] = useState(false);
+  const [hasNotification, setHasNotification] = useState(false);
 
   return (
     <header className="flex justify-between items-center mb-10">
@@ -225,10 +249,18 @@ const Header = () => {
         </div>
 
         {/* mobile screen only */}
-        <NavSmallScreen isOpenMenu={isOpenMenu} setOpenMenu={setOpenMenu} />
+        <NavSmallScreen
+          isOpenMenu={isOpenMenu}
+          setOpenMenu={setOpenMenu}
+          hasNotification={hasNotification}
+          setHasNotification={setHasNotification}
+        />
 
         {/* medium to large screen*/}
-        <NavLargeScreen />
+        <NavLargeScreen
+          hasNotification={hasNotification}
+          setHasNotification={setHasNotification}
+        />
       </div>
     </header>
   );

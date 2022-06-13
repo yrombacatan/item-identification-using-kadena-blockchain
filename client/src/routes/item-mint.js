@@ -18,8 +18,6 @@ import { createTransaction } from "../api/transaction";
 const ipfsClient = create("https://ipfs.infura.io:5001/api/v0");
 
 const ItemMint = () => {
-  const [result, setResult] = useState("");
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [requestKey, setRequestKey] = useState("");
   const [inputList, setInputList] = useState({
@@ -169,6 +167,7 @@ const ItemMint = () => {
       });
 
       // save transaction
+      // data.metaData = { test: true };
       await createTransaction({
         ...data,
         accountAddress: localStorage.getItem("accountAddress"),

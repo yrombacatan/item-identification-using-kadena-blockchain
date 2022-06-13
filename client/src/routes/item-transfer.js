@@ -41,7 +41,6 @@ const ItemTransfer = () => {
   const [item, setItem] = useState("");
   const [receiverAddress, setReceiverAddress] = useState("");
   const [requestKey, setRequestkey] = useState("");
-  const [result, setResult] = useState("");
   const [showImage, setShowImage] = useState(false);
   const params = useParams();
   const navigate = useNavigate();
@@ -149,6 +148,7 @@ const ItemTransfer = () => {
       });
 
       // save transaction=
+      // data.metaData = { test: true };
       await createTransaction({
         ...data,
         accountAddress: localStorage.getItem("accountAddress"),

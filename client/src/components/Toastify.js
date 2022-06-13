@@ -1,5 +1,6 @@
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { v4 as uuidv4 } from "uuid";
 
 const props = {
   position: "top-right",
@@ -28,7 +29,7 @@ const toastUpdate = (id, otherProps) => {
 };
 
 const ToastifyContainer = (props) => {
-  return <ToastContainer {...props} limit={1} />;
+  return <ToastContainer key={() => uuidv4()} {...props} limit={1} />;
 };
 
 export {

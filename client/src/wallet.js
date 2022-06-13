@@ -1,5 +1,3 @@
-import { useNavigate } from "react-router-dom";
-
 import Pact from "pact-lang-api";
 import kadenaAPI from "./kadena-config";
 
