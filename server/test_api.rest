@@ -55,3 +55,14 @@ Content-Type: application/json
 {
     "account_address": "f809be2b76e9ac0d6fc5d6c5c18d119618ea71c1958796d8d9a83bddd118a74e"
 }
+
+// live server
+
+####
+POST https://item-identification.herokuapp.com/api/notification
+Content-Type: application/json
+
+{
+    "item_id": "01",
+    "account_address": "f809be2b76e9ac0d6fc5d6c5c18d119618ea71c1958796d8d9a83bddd118a74e"
+}

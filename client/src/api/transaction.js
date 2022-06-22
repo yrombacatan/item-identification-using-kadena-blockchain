@@ -1,3 +1,5 @@
+import { host } from "./config";
+
 async function createTransaction({
   result,
   reqKey,
@@ -17,7 +19,7 @@ async function createTransaction({
     event: eventType,
   };
 
-  const res = await fetch("http://localhost:3001/api/transaction", {
+  const res = await fetch(`${host}/api/transaction`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

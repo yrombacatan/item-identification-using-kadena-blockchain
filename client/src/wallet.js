@@ -4,53 +4,61 @@ import kadenaAPI from "./kadena-config";
 import { removePrefixK } from "./utils";
 import { toastLoading, toastUpdate } from "./components/Toastify";
 
-const connectWallet = async (account) => {
+const connectWallet = async () => {
   const hasXwallet = window?.kadena?.isKadena === true;
-  if (account) {
-    if (hasXwallet) {
-      await window.kadena.request({
-        method: "kda_disconnect",
-        networkId: kadenaAPI.meta.networkId,
-      });
-      const result = await window.kadena.request({
-        method: "kda_connect",
-        networkId: kadenaAPI.meta.networkId,
-      });
+  //if (account) {
+  if (hasXwallet) {
+    await window.kadena.request({
+      method: "kda_disconnect",
+      networkId: kadenaAPI.meta.networkId,
+    });
+    const result = await window.kadena.request({
+      method: "kda_connect",
+      networkId: kadenaAPI.meta.networkId,
+    });
 
-      if (result.status === "fail") {
-        throw new Error(result.message);
-      }
-
-      if (result.account.account !== account) {
-        throw new Error(
-          "Tried to connect to X Wallet but not with the account entered. Make sure you have logged into the right account in X Wallet"
-        );
-      }
-    } else {
-      const host = "http://localhost:9467/v1/accounts";
-      const newAccount = removePrefixK(account);
-      const res = await fetch(host, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          asset: "kadena",
-        }),
-      });
-
-      const { data, status } = await res.json();
-      if (status === "error") {
-        throw new Error(data);
-      }
-
-      if (!data.includes(newAccount) && !data.includes(`k:${newAccount}`)) {
-        throw new Error(
-          "Tried to connect to X Wallet but not with the account entered. Make sure you have logged into the right account in X Wallet"
-        );
-      }
+    if (result.status === "fail") {
+      throw new Error(result.message);
     }
+
+    return result.account.account;
+    // if (result.account.account !== account) {
+    //   throw new Error(
+    //     "Tried to connect to X Wallet but not with the account entered. Make sure you have logged into the right account in X Wallet"
+    //   );
+    // }
+  } else {
+    const host = "http://localhost:9467/v1/accounts";
+    //const newAccount = removePrefixK(account);
+    const res = await fetch(host, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        asset: "kadena",
+      }),
+    });
+
+    const { data, status } = await res.json();
+
+    if (status === "error") {
+      throw new Error(data);
+    }
+
+    if (data.length > 1) {
+      throw new Error("Please share only single address for this application.");
+    }
+
+    return data[0];
+
+    // if (!data.includes(newAccount) && !data.includes(`k:${newAccount}`)) {
+    //   throw new Error(
+    //     "Tried to connect to X Wallet but not with the account entered. Make sure you have logged into the right account in X Wallet"
+    //   );
+    // }
   }
+  //}
 };
 
 const fetchAccount = async (address) => {

@@ -1,5 +1,7 @@
+import { host } from "./config";
+
 async function createNotification({ itemId, receiverAddress }) {
-  const res = await fetch("http://localhost:3001/api/notification", {
+  const res = await fetch(`${host}/api/notification`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -14,14 +16,12 @@ async function createNotification({ itemId, receiverAddress }) {
 }
 
 async function getNotification(accountAddress) {
-  const res = await fetch(
-    `http://localhost:3001/api/notification/${accountAddress}`
-  );
+  const res = await fetch(`${host}/api/notification/${accountAddress}`);
   return await res.json();
 }
 
 async function updateNotificationById(id) {
-  const res = await fetch("http://localhost:3001/api/notification/", {
+  const res = await fetch(`${host}/api/notification`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",

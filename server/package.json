@@ -1,12 +1,12 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
-    "mongo": "mongod dbpath='mongodb'",
+    "mongodb": "rmdir /s mongodb && mkdir mongodb && mongod --dbpath=mongodb",
     "server": "nodemon server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
@@ -19,5 +19,10 @@
     "joi": "^17.6.0",
     "mongoose": "^6.3.5",
     "nodemon": "^2.0.16"
+  },
+  "devDependencies": {},
+  "description": "",
+  "engines": {
+    "node": "16.x"
   }
 }

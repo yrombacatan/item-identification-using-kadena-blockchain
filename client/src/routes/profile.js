@@ -12,6 +12,7 @@ import FeatherIcon from "feather-icons-react";
 import { signTransaction, handleListen, checkWallet } from "../wallet";
 import kadenaAPI from "../kadena-config";
 import { removePrefixK } from "../utils";
+import { host } from "../api/config";
 
 const Form = ({ input, setInput, onSubmit, disableButton }) => {
   const [edit, setEdit] = useState(false);
@@ -125,9 +126,7 @@ const Transaction = () => {
   const getTransactions = async () => {
     try {
       const res = await fetch(
-        `http://localhost:3001/api/transaction/${localStorage.getItem(
-          "accountAddress"
-        )}`
+        `${host}/api/transaction/${localStorage.getItem("accountAddress")}`
       );
       const transactions = await res.json();
       const newTransactions = transactions.map((transaction) => ({
@@ -269,7 +268,7 @@ const UserProfile = () => {
       const cap1 = Pact.lang.mkCap(
         "Gas Payer",
         "Payer",
-        `${kadenaAPI.contractAddress}.GAS_PAYER`,
+        `${kadenaAPI.gasStationAddress}.GAS_PAYER`,
         ["hi", { int: 1 }, 1.0]
       );
 
